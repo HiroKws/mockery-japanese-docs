@@ -1,4 +1,5 @@
-/mockery-repository
-/scripts
-/public
-/templates
+/mockery-repository/
+/scripts/
+/public/
+/templates/
+/generate-all
