@@ -1,153 +1,106 @@
 .. index::
-    single: Reference; Creating Test Doubles
+    single: Reference; テストダブル作成
 
-Creating Test Doubles
+テストダブル作成
 =====================
 
-Mockery's main goal is to help us create test doubles. It can create stubs,
-mocks, and spies.
+Mockeyのメインゴールは、テストダブル（代替物）の作成を手伝うことです。スタブやモック、スパイを作成できます。
 
-Stubs and mocks are created the same. The difference between the two is that a
-stub only returns a preset result when called, while a mock needs to have
-expectations set on the method calls it expects to receive.
+スタブとモックは同じものが生成されます。２つの違いは、スタブが呼び出し時に指定した結果を返すだけなのに対し、モックは受け取るのを期待しているメソッド呼び出しのエクスペクションを指定できる必要があります。
 
-Spies are a type of test doubles that keep track of the calls they received, and
-allow us to inspect these calls after the fact.
+スパイは受け取った呼び出しの記録を保持し、後ほど呼び出し結果を調査できるようにしてくれるテストダブルのタイプです。
 
-When creating a test double object, we can pass in an identifier as a name for
-our test double. If we pass it no identifier, the test double name will be
-unknown. Furthermore, the identifier must not be a class name. It is a
-good practice, and our recommendation, to always name the test doubles with the
-same name as the underlying class we are creating test doubles for.
+テストダブルオブジェクトの作成時、テストダブルの名前として識別子を渡すことができます。識別子を渡さないと、そのテストダブルの名前は不明（unknown)となります。さらに、識別子はクラス名である必要はありません。グッドプラクティスであり、私達がおすすめしているのは、常にテストダブルの対象のクラスと同じ名前を付けることです。
 
-If the identifier we use for our test double is a name of an existing class,
-the test double will inherit the type of the class (via inheritance), i.e. the
-mock object will pass type hints or ``instanceof`` evaluations for the existing
-class. This is useful when a test double must be of a specific type, to satisfy
-the expectations our code has.
+テストダブルに存在しているクラスと同じ名前を使用すると、そのテストダブルは（継承により）そのクラスのタイプを継承します。たとえば、モックオブジェクトは存在しているクラスのタイプヒントや、``instanceof``の評価を渡します。これは私達のコードが持つ期待を満足させるために、テストダブルが特定のタイプである必要がある場合に便利です。
 
-Stubs and mocks
+スタブとモック
 ---------------
 
-Stubs and mocks are created by calling the ``\Mockery::mock()`` method. The
-following example shows how to create a stub, or a mock, object named "foo":
+スタブとモックは、``\Mockery::mock()``メソッドを呼び出し、生成します。以下の例では、"foo"という名前のスタブ、もしくはモックをどのように作成するかを示しています。
 
 .. code-block:: php
 
     $mock = \Mockery::mock('foo');
 
-The mock object created like this is the loosest form of mocks possible, and is
-an instance of ``\Mockery\MockInterface``.
+このように生成されたモックオブジェクトは、最もゆるい形態のモックで、``\Mockery\MockInterface``のインスタンスです。
 
-.. note::
+    {note} スタブ、モック、スパイにかかわらず、Mockeryにより生成されるテストダブルは、``\Mockery\MockInterface``のインスタンスです。
 
-    All test doubles created with Mockery are an instance of
-    ``\Mockery\MockInterface``, regardless are they a stub, mock or a spy.
-
-To create a stub or a mock object with no name, we can call the ``mock()``
-method with no parameters:
+名前を持たないスタブやモックを生成するには、引数を付けずに``mock()``を呼び出してください。
 
 .. code-block:: php
 
     $mock = \Mockery::mock();
 
-As we stated earlier, we don't recommend creating stub or mock objects without
-a name.
+以前説明したように、無名のモックオブジェクトを生成することは推奨していません。
 
-Classes, abstracts, interfaces
+クラス、抽象クラス、インターフェイス
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The recommended way to create a stub or a mock object is by using a name of
-an existing class we want to create a test double of:
+スタブやモックオブジェクトを生成するために推奨するのは、テストダブルを作成する対象の実クラス名を使用する方法です。
 
 .. code-block:: php
 
     $mock = \Mockery::mock('MyClass');
 
-This stub or mock object will have the type of ``MyClass``, through inheritance.
+このスタブ／モックオブジェクトは、継承により``MyClass``のタイプを保ちます。
 
-Stub or mock objects can be based on any concrete class, abstract class or even
-an interface. The primary purpose is to ensure the mock object inherits a
-specific type for type hinting.
+スタブとモックオブジェクトは、具象クラス、抽象クラス、そしてインターフェイスでさえもベースにできます。一番の目的はタイプヒントに合致させるために、特定のタイプを確実にモックオブジェクトへ継承させることです。
 
 .. code-block:: php
 
     $mock = \Mockery::mock('MyInterface');
 
-This stub or mock object will implement the ``MyInterface`` interface.
+このスタブ／モックオブジェクトは、``MyInterface``インターフェイスを実装します。
 
-.. note::
+    {note} finalを指定したクラス、もしくはfinalを指定したメソッドを持つクラスは、完全にモックすることはできません。こうしたクラスに対して、Mockeryはパーシャル（部分）モックの作成をサポートしています。パーシャルモックについては、ドキュメントで後ほど解説します。
 
-    Classes marked final, or classes that have methods marked final cannot be
-    mocked fully. Mockery supports creating partial mocks for these cases.
-    Partial mocks will be explained later in the documentation.
-
-Mockery also supports creating stub or mock objects based on a single existing
-class, which must implement one or more interfaces. We can do this by providing
-a comma-separated list of the class and interfaces as the first argument to the
-``\Mockery::mock()`` method:
+Mockeryは、一つのクラスで複数のインターフェイスを実装するクラスに基づいたスタブ／モックの生成もサポートしています。``\Mockery::mock()``メソッドの最初の引数として、クラスとインターフェイスをコンマ区切りのリストで指定してください。
 
 .. code-block:: php
 
     $mock = \Mockery::mock('MyClass, MyInterface, OtherInterface');
 
-This stub or mock object will now be of type ``MyClass`` and implement the
-``MyInterface`` and ``OtherInterface`` interfaces.
+これでこのスタブは、``MyClass``のタイプを持ち、``MyInterface``と``OtherInterface``インターフェイスを実装します。
 
-.. note::
+    {note} リストの最初の項目であるクラス名は必須ではありませんが、指定したほうが読みやすくフレンドリーでしょう。
 
-    The class name doesn't need to be the first member of the list but it's a
-    friendly convention to use for readability.
-
-We can tell a mock to implement the desired interfaces by passing the list of
-interfaces as the second argument:
+モックへインターフェイスのリストを第２引数として渡し、実装することもできます。
 
 .. code-block:: php
 
     $mock = \Mockery::mock('MyClass', 'MyInterface, OtherInterface');
 
-For all intents and purposes, this is the same as the previous example.
+これは直前の例と全く同じ、意図と目的です。
 
-Spies
+スパイ
 -----
 
-The third type of test doubles Mockery supports are spies. The main difference
-between spies and mock objects is that with spies we verify the calls made
-against our test double after the calls were made. We would use a spy when we
-don't necessarily care about all of the calls that are going to be made to an
-object.
+Mockeryがサポートする、テストダブルの３つ目のタイプはスパイです。スパイとモックオブジェクトの主な違いは、スパイはテストダブルに対して行われた呼び出しの検査を呼び出し後に確認できることです。スパイはオブジェクトに対して行われる呼び出しの全てを確認する必要はない場合に使用します。
 
-A spy will return ``null`` for all method calls it receives. It is not possible
-to tell a spy what will be the return value of a method call. If we do that, then
-we would deal with a mock object, and not with a spy.
+スパイは受け取ったメソッド呼び出し全てに対して、``null``を返します。メソッド実行の戻り値をスパイに指定することはできません。そうしたいのであれば、スパイではなくモックオブジェクトを使用してください。
 
-We create a spy by calling the ``\Mockery::spy()`` method:
+スパイを作成するには、``\Mockery::spy()``メソッドを呼び出します。
 
 .. code-block:: php
 
     $spy = \Mockery::spy('MyClass');
 
-Just as with stubs or mocks, we can tell Mockery to base a spy on any concrete 
-or abstract class, or to implement any number of interfaces:
+スタブ／モックと同様に、具象クラス、抽象クラスをベースにするか、好きな数のインターフェイスを実装するように、Mockeryへ指示できます。
 
 .. code-block:: php
 
     $spy = \Mockery::spy('MyClass, MyInterface, OtherInterface');
 
-This spy will now be of type ``MyClass`` and implement the ``MyInterface`` and
-``OtherInterface`` interfaces.
+このスパイは、これにより``MyClass``のタイプで、``MyInterface``と``OtherInterface``を実装しました。
 
-.. note::
+    {note} ``\Mockery::spy()``メソッドコールは実際には、``\Mockery::mock()->shouldIgnoreMissing()``呼び出しの短縮形です。``shouldIgnoreMissing``メソッドは、「振る舞いのモディファイヤ（変更指示）」です。すぐ後に説明します。
 
-    The ``\Mockery::spy()`` method call is actually a shorthand for calling
-    ``\Mockery::mock()->shouldIgnoreMissing()``. The ``shouldIgnoreMissing``
-    method is a "behaviour modifier". We'll discuss them a bit later.
-
-Mocks vs. Spies
+モック vs. スパイ
 ---------------
 
-Let's try and illustrate the difference between mocks and spies with the
-following example:
+以下の例を使用し、モックとスパイの違いを説明しましょう。
 
 .. code-block:: php
 
@@ -164,33 +117,25 @@ following example:
     var_dump($mockResult); // int(42)
     var_dump($spyResult); // null
 
-As we can see from this example, with a mock object we set the call expectations
-before the call itself, and we get the return result we expect it to return.
-With a spy object on the other hand, we verify the call has happened after the
-fact. The return result of a method call against a spy is always ``null``.
+この例でわかるように、モックオブジェクトでは呼び出す前に呼び出しのエクスペクションを指定しており、返ってくることを期待している結果を得ています。一方のスパイオブジェクトは、実行された呼び出しを後ほど確認しています。スパイに対するメソッドコールは常に``null``を返します。
 
-We also have a dedicated chapter to :doc:`spies` only.
+`スパイ<spies.html>`_専用の章もご覧ください。
 
-.. _creating-test-doubles-partial-test-doubles:
-
-Partial Test Doubles
+パーシャルテストダブル
 --------------------
 
-Partial doubles are useful when we want to stub out, set expectations for, or
-spy on *some* methods of a class, but run the actual code for other methods.
+パーシャル（部分）ダブルは、スタブのメソッドにエクスペクションを指定する、もしくはクラスの*いくつか*のメソッドをスパイするが、他のメソッドに関しては実際のコードを実行したい場合に便利です。
 
-We differentiate between three types of partial test doubles:
+パーシャルテストダブルは、３つに分けています。
 
- * runtime partial test doubles,
- * generated partial test doubles, and
- * proxied partial test doubles.
+ * ランタイムパーシャルテストダブル
+ * 生成パーシャルテストダブル
+ * プロキシパーシャルテストダブル
 
-Runtime partial test doubles
+ランタイムパーシャルテストダブル
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-What we call a runtime partial, involves creating a test double and then telling
-it to make itself partial. Any method calls that the double hasn't been told to
-allow or expect, will act as they would on a normal instance of the object.
+ランタイムパーシャルと呼ぶ場合、テストダブルを作成し、それからそれをパーシャルに指定することを意味します。許可(`allow<alternative_should_receive_syntax.html#allows>`_)か期待(`expect<alternative_should_receive_syntax.html#expects>`_)するようにダブルへ指示していないメソッド呼び出しは、全てオブジェクトの通常のインスタンス上で実行されます。
 
 .. code-block:: php
 
@@ -202,25 +147,19 @@ allow or expect, will act as they would on a normal instance of the object.
     $foo = mock(Foo::class)->makePartial();
     $foo->foo(); // int(123);
 
-We can then tell the test double to allow or expect calls as with any other
-Mockery double.
+他のMockeryダブルと同様に、このテストダブルに呼び出しの許可や期待を指定できます。
 
 .. code-block:: php
 
     $foo->shouldReceive('foo')->andReturn(456);
     $foo->bar(); // int(456)
 
-See the cookbook entry on :doc:`../cookbook/big_parent_class` for an example
-usage of runtime partial test doubles.
+ランタイムパーシャルテストダブルの使用例は、クックブックの`大きなParentクラス<big_parent_class.html>`_ページで確認してください。
 
-Generated partial test doubles
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+生成パーシャルテストダブル
+^^^^^^^^^^^^^^^^^^^^^^
 
-The second type of partial double we can create is what we call a generated
-partial. With generated partials, we specifically tell Mockery which methods
-we want to be able to allow or expect calls to. All other methods will run the
-actual code *directly*, so stubs and expectations on these methods will not
-work.
+生成可能な２つ目のパーシャルダブルタイプは、生成パーシャルと呼んでおり、Mockeryにどのメソッドが許可／期待できるのかを指定したものです。指定外のメソッドでは、 **直接** 実際のコードが実行されるため、スタブやメソッドに対するエクスペクションは動作しません。
 
 .. code-block:: php
 
@@ -231,7 +170,7 @@ work.
 
     $foo = mock("Foo[foo]");
 
-    $foo->foo(); // error, no expectation set
+    $foo->foo(); // エラー、エクスペクションを指定していない
 
     $foo->shouldReceive('foo')->andReturn(456);
     $foo->foo(); // int(456)
@@ -240,180 +179,121 @@ work.
     $foo->shouldReceive('bar')->andReturn(999);
     $foo->bar(); // int(456)
 
-.. note::
+|nbsp|
 
-    Even though we support generated partial test doubles, we do not recommend
-    using them.
+    {note} 生成パーシャルテストダブルをサポートしていますが、この機能の使用は推奨していません。
 
-    One of the reasons why is because a generated partial will call the original
-    constructor of the mocked class. This can have unwanted side-effects during
-    testing application code.
+    理由の一つは、生成パーシャルはモックしようとするオリジナルクラスのコンストラクターを呼び出してしまうからです。これにより、アプリケーションコードをテストするとき、思いもしない副作用が生まれることでしょう。
 
-    See :doc:`../cookbook/not_calling_the_constructor` for more details.
+    詳細については、`オリジナルのコンストラクターを呼び出さない<not_calling_the_constructor.html>`_を参照してください。
 
-Proxied partial test doubles
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-A proxied partial mock is a partial of last resort. We may encounter a class
-which is simply not capable of being mocked because it has been marked as
-final. Similarly, we may find a class with methods marked as final. In such a
-scenario, we cannot simply extend the class and override methods to mock - we
-need to get creative.
+プロキシパーシャルテストダブル
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+パーシャルの最後の種類は、プロキシパーシャルモックです。finalが指定されているためモックにできないクラスに遭遇することがあります。似たようなケースで、finalが指定されているメソッドを持つクラスに出会うことがあります。このようなシナリオではモックするため、シンプルにクラスを拡張することも、メソッドをオーバーライドすることもできません。クリエイティブに解決する必要があります。
 
 .. code-block:: php
 
     $mock = \Mockery::mock(new MyClass);
 
-Yes, the new mock is a Proxy. It intercepts calls and reroutes them to the
-proxied object (which we construct and pass in) for methods which are not
-subject to any expectations. Indirectly, this allows us to mock methods
-marked final since the Proxy is not subject to those limitations. The tradeoff
-should be obvious - a proxied partial will fail any typehint checks for the
-class being mocked since it cannot extend that class.
+そうです、この新しいモックはプロキシです。呼び出しを横取りし、エクスペクションが指定されていないメソッド呼び出しは、（生成し、mockメソッドに渡した）仲介するオブジェクトへ渡し直します。これにより間接的にfinalのメソッドをモックできます。なぜなら、プロキシは制約を受けないからです。トレードオフは明確です。プロキシパーシャルはモックしようとしているクラスのタイプヒントのチェックに失敗します。なぜなら、そのクラスを拡張できないからです。
 
-.. _creating-test-doubles-aliasing:
-
-Aliasing
+エイリアス
 --------
 
-Prefixing the valid name of a class (which is NOT currently loaded) with
-"alias:" will generate an "alias mock". Alias mocks create a class alias with
-the given classname to stdClass and are generally used to enable the mocking
-of public static methods. Expectations set on the new mock object which refer
-to static methods will be used by all static calls to this class.
+（まだロードされていない）クラスの名前に、"alias:"をプレフィックスとして付けると、「エイリアスモック」が生成されます。エイリアスモックは、指定したクラス名でstdClassのクラスエイリアスを作成します。このエイリアスはpublicの静的メソッドをモックできるようにするために使用します。新しいモックオブジェクトへ指定される、静的メソッドを参照するエクスペクションは、このクラスへの全静的呼び出しにより使用されます。
 
 .. code-block:: php
 
     $mock = \Mockery::mock('alias:MyClass');
 
+|nbsp|
 
-.. note::
+    {note} クラスのエイリアスをサポートしていますが、推奨していません。
 
-    Even though aliasing classes is supported, we do not recommend it.
-
-Overloading
+オーバーロード
 -----------
 
-Prefixing the valid name of a class (which is NOT currently loaded) with
-"overload:" will generate an alias mock (as with "alias:") except that created
-new instances of that class will import any expectations set on the origin
-mock (``$mock``). The origin mock is never verified since it's used an
-expectation store for new instances. For this purpose we use the term "instance
-mock" to differentiate it from the simpler "alias mock".
+（まだロードされていない）有効なクラス名へ"overload:"をプリフィックスとして付けると、（"alias:"と同様に）エイリアスモックを生成します。違いは、そのクラスの新しいインスタンスが生成され、オリジナルのモック(``$mock``)に指定されたエクスペクションを全てインポートすることです。オリジナルのモックは新しいインスタンスへエクスペクションを保存するために使用されるため、検査されることはありません。シンプルな「エイリアスモック」と区別するために、「インスタンスモック」という言葉を使用しています。
 
-In other words, an instance mock will "intercept" when a new instance of the
-mocked class is created, then the mock will be used instead. This is useful
-especially when mocking hard dependencies which will be discussed later.
+言い換えれば、モックしたクラスの新しいインスタンスが生成されて時に、インスタンスモックは「横取り」し、モックが代わりに使用されます。これは特に、後ほど説明する依存が強い場合のモックで便利です。
 
 .. code-block:: php
 
     $mock = \Mockery::mock('overload:MyClass');
 
-.. note::
+|nbsp|
 
-    Using alias/instance mocks across more than one test will generate a fatal
-    error since we can't have two classes of the same name. To avoid this,
-    run each test of this kind in a separate PHP process (which is supported
-    out of the box by both PHPUnit and PHPT).
+    {note} ２つ以上のテスト間で、エイリアス／インスタンスモックを使用すると、同じ名前の２つのクラスは持てないため、fatalエラーが発生します。これを防ぐには、この種のテストは、独立したPHPプロセスで実行してください。PHPUnitとPHPTで、サポートされています。
 
-
-.. _creating-test-doubles-named-mocks:
-
-Named Mocks
+名前付きモック
 -----------
 
-The ``namedMock()`` method will generate a class called by the first argument,
-so in this example ``MyClassName``. The rest of the arguments are treated in the
-same way as the ``mock`` method:
+``namedMock()``は最初の引数により呼び出されるクラスを生成します。下記の例の場合は、``MyClassName``です。残りの引数は、``mock``メソッドと同じ取り扱いです。
 
 .. code-block:: php
 
     $mock = \Mockery::namedMock('MyClassName', 'DateTime');
 
-This example would create a class called ``MyClassName`` that extends
-``DateTime``.
+この例では、``DateTime``を拡張した、``MyClassName``という名前のクラスが生成されます。
 
-Named mocks are quite an edge case, but they can be useful when code depends
-on the ``__CLASS__`` magic constant, or when we need two derivatives of an
-abstract type, that are actually different classes.
+名前付きモックが使用されるのは極めてまれですが、コードが``__CLASS__``マジック定数に依存しているか、一つの抽象クラスから派生した、実際には別の２つのクラスが必要な場合に役立ちます。
 
-See the cookbook entry on :doc:`../cookbook/class_constants` for an example
-usage of named mocks.
+名前付きモックの使用例は、クックブックの章の`クラス定数<class_constants.html>`_をご覧ください。
 
-.. note::
+|nbsp|
 
-    We can only create a named mock once, any subsequent calls to
-    ``namedMock``, with different arguments are likely to cause exceptions.
+    {note} 名前付きモックは一度のみ生成でき、以降に別の引数で``namedMock``を呼び出すと例外が発生します。
 
-.. _creating-test-doubles-constructor-arguments:
+コンストラクターの引数
+-------------------
 
-Constructor Arguments
----------------------
-
-Sometimes the mocked class has required constructor arguments. We can pass these
-to Mockery as an indexed array, as the 2nd argument:
+モックするクラスが、コンストラクタ引数を必要とする場合が時々あります。２つ目の引数にインデックスされた配列としてMockeryへ渡すことができます。
 
 .. code-block:: php
 
     $mock = \Mockery::mock('MyClass', [$constructorArg1, $constructorArg2]);
 
-or if we need the ``MyClass`` to implement an interface as well, as the 3rd
-argument:
+もし、同時に``MyClass``がインターフェイスを実装する場合は、第３引数として渡します。
 
 .. code-block:: php
 
     $mock = \Mockery::mock('MyClass', 'MyInterface', [$constructorArg1, $constructorArg2]);
 
-Mockery now knows to pass in ``$constructorArg1`` and ``$constructorArg2`` as
-arguments to the constructor.
+これで、Mockeryは``$constructorArg1``と``$constructorArg2``をコンストラクターへ渡すことがわかります。
 
-.. _creating-test-doubles-behavior-modifiers:
-
-Behavior Modifiers
+振る舞いモディファイヤー
 ------------------
 
-When creating a mock object, we may wish to use some commonly preferred
-behaviours that are not the default in Mockery.
+モックオブジェクトを作成する際、Mockeryのデフォルトの振る舞いではなく、一般的によく使用される振る舞いにしたい場合があります。
 
-The use of the ``shouldIgnoreMissing()`` behaviour modifier will label this
-mock object as a Passive Mock:
+``shouldIgnoreMissing()``振る舞いモディファイヤーを使用すると、このモックはパッシブモックであるとラベル付けることができます。
 
 .. code-block:: php
 
     \Mockery::mock('MyClass')->shouldIgnoreMissing();
 
-In such a mock object, calls to methods which are not covered by expectations
-will return ``null`` instead of the usual error about there being no expectation
-matching the call.
+このようなモックオブジェクトでは、エクスペクションでカバーされていないメソッドの呼び出し時に、一致するエクスペクションが見つからない通常のエラーの代わりに、``null``を返します。
 
-On PHP >= 7.0.0, methods with missing expectations that have a return type
-will return either a mock of the object (if return type is a class) or a
-"falsy" primitive value, e.g. empty string, empty array, zero for ints and
-floats, false for bools, or empty closures.
+PHP7.0.0以降では、エクスペクションが見つからず、返すタイプを持つメソッドは、（返すタイプがクラスの場合）オブジェクトのモックか、空文字列や空配列、整数や実数ではゼロ、論理値ではfalse、もしくは空のクロージャーのような「偽」にあたるプリミティブな値のどれかを返します。
 
-On PHP >= 7.1.0, methods with missing expectations and nullable return type
-will return null.
+PHP7.1.0以降では、エクスペクションが見つからないメソッドで、返すタイプがnullableの場合,nullを返します。
 
-We can optionally prefer to return an object of type ``\Mockery\Undefined``
-(i.e.  a ``null`` object) (which was the 0.7.2 behaviour) by using an
-additional modifier:
+（たとえば、``null``オブジェクトの）``\Mockery\Undefined``タイプのオブジェクトを返したい場合（バージョン0.7.2での振る舞い）は、追加のモディファイヤーを使用することもできます。
 
 .. code-block:: php
 
     \Mockery::mock('MyClass')->shouldIgnoreMissing()->asUndefined();
 
-The returned object is nothing more than a placeholder so if, by some act of
-fate, it's erroneously used somewhere it shouldn't it will likely not pass a
-logic check.
+返されるオブジェクトはプレースホルダー（代用品）でしかないため、使うべきでない場所で使用する間違った使い方を行えば、運命の導きにより、ロジックチェックをパスしないでしょう。
 
-We have encountered the ``makePartial()`` method before, as it is the method we
-use to create runtime partial test doubles:
+``makePartial()``メソッドは、ランタイムパーシャルテストダブルを生成するメソッドとして、既に説明しました。
 
 .. code-block:: php
 
     \Mockery::mock('MyClass')->makePartial();
 
-This form of mock object will defer all methods not subject to an expectation to
-the parent class of the mock, i.e. ``MyClass``. Whereas the previous
-``shouldIgnoreMissing()`` returned ``null``, this behaviour simply calls the
-parent's matching method.
+この形式のモックオブジェクトは、エクスペクションの対象外のメソッドをモックの親クラス、この例の場合は``MyClass``へ引き渡します。前の``shouldIgnoreMissing()``が``null``を返していましたが、この振る舞いは単に一致する親のメソッドを呼び出すだけです。
+
+.. |nbsp| unicode:: 0xA0 .. non breaking space

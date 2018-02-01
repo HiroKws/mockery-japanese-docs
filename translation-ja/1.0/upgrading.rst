@@ -1,30 +1,25 @@
 .. index::
-    single: Upgrading
+    single: アップグレード
 
-Upgrading
+アップグレード
 =========
 
-Upgrading to 1.0.0
+1.0.0へのアップグレード
 ------------------
 
-To be written.
+未稿
 
-Upgrading to 0.9
+0.9へのアップグレード
 ----------------
 
-The generator was completely rewritten, so any code with a deep integration to
-mockery will need evaluating.
+ジェネレータを完全に書き換えたため、Mockeryと深く統合しているコードは全て評価する必要があります。
 
-Upgrading to 0.8
+0.8へのアップグレード
 ----------------
 
-Since the release of 0.8.0 the following behaviours were altered:
+0.8.0のリリースから、以下の振る舞いが変更となります。
 
-1. The ``shouldIgnoreMissing()`` behaviour optionally applied to mock objects
-   returned an instance of ``\Mockery\Undefined`` when methods called did not
-   match a known expectation. Since 0.8.0, this behaviour was switched to
-   returning ``null`` instead. You can restore the 0.7.2 behaviour by using the
-   following:
+1. ``shouldIgnoreMissing()``の振る舞いのオプションとして、既知のエクスペクションとマッチしないメソッドが呼び出された際に、モックオブジェクトが``\Mockery\Undefined``のインスタンスを返していました。0.8.0から代わりに``null``が返すように変更されました。0.7.2の動作をさせたい場合は、次のようにします。
 
    .. code-block:: php
 

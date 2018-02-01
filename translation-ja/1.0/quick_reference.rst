@@ -1,15 +1,14 @@
 .. index::
-    single: Quick Reference
+    single: クイックリファレンス
 
-Quick Reference
+クイックリファレンス
 ===============
 
-The purpose of this page is to give a quick and short overview of some of the
-most common Mockery features.
+このページは、Mockeryの最も利用される機能を素早く理解してもらうために、短く概略を示すことを目的としています。
 
-Do read the :doc:`../reference/index` to learn about all the Mockery features.
+Mockeryの機能を全て学習するには、「`リファレンス <index.html#リファレンス>`_」を参照してください。
 
-Integrate Mockery with PHPUnit, either by extending the ``MockeryTestCase``:
+PHPUnitとMockeryを統合するか、``MockeryTestCase``を拡張してください。
 
 .. code-block:: php
 
@@ -19,7 +18,7 @@ Integrate Mockery with PHPUnit, either by extending the ``MockeryTestCase``:
     {
     }
 
-or by using the ``MockeryPHPUnitIntegration`` trait:
+もしくは、``MockeryPHPUnitIntegration``トレイトを使用します。
 
 .. code-block:: php
 
@@ -31,34 +30,33 @@ or by using the ``MockeryPHPUnitIntegration`` trait:
         use MockeryPHPUnitIntegration;
     }
 
-Creating a test double:
+テストダブル（代替物）を作成するには：
 
 .. code-block:: php
 
     $testDouble = \Mockery::mock('MyClass');
 
-Creating a test double that implements a certain interface:
+特定のインターフェイスを実装したテストダブルを作成するには：
 
 .. code-block:: php
 
     $testDouble = \Mockery::mock('MyClass, MyInterface');
 
-Expecting a method to be called on a test double:
+テストダブルでメソッドが呼び出されるのを期待するには：
 
 .. code-block:: php
 
     $testDouble = \Mockery::mock('MyClass');
     $testDouble->shouldReceive('foo');
 
-Expecting a method to **not** be called on a test double:
+テストダブルでメソッドが呼び出され **ない** のを期待するには：
 
 .. code-block:: php
 
     $testDouble = \Mockery::mock('MyClass');
     $testDouble->shouldNotReceive('foo');
 
-Expecting a method to be called on a test double, once, with a certain argument,
-and to return a value:
+テストダブルでメソッドが一回(once)、特定の引数で呼び出され、ある値を返すのを期待するには：
 
 .. code-block:: php
 
@@ -68,8 +66,7 @@ and to return a value:
         ->with($arg)
         ->andReturn($returnValue);
 
-Expecting a method to be called on a test double and to return a different value
-for each successive call:
+テストダブルでメソッドが呼び出され、成功した呼び出しごとに異なった値が返されることを期待するには：
 
 .. code-block:: php
 
@@ -82,19 +79,19 @@ for each successive call:
     $mock->foo(); // int(3);
     $mock->foo(); // int(3);
 
-Creating a runtime partial test double:
+部分的なランタイムテストダブルを生成するには：
 
 .. code-block:: php
 
     $mock = \Mockery::mock('MyClass')->makePartial();
 
-Creating a spy:
+スパイを生成するには：
 
 .. code-block:: php
 
     $spy = \Mockery::spy('MyClass');
 
-Expecting that a spy should have received a method call:
+スパイでメソッドの呼び出しが必ず行われるのを期待するには：
 
 .. code-block:: php
 
@@ -104,11 +101,10 @@ Expecting that a spy should have received a method call:
 
     $spy->shouldHaveReceived()->foo();
 
-Not so simple examples
-^^^^^^^^^^^^^^^^^^^^^^
+簡単ではない例
+^^^^^^^^^^^^
 
-Creating a mock object to return a sequence of values from a set of method
-calls:
+一連のメソッド呼び出しにより、連続した値が返されるモックオブジェクトを生成するには：
 
 .. code-block:: php
 
@@ -124,8 +120,7 @@ calls:
         }
     }
 
-Creating a mock object which returns a self-chaining Undefined object for a
-method call:
+あるメソッドコールで自身にチェーンし、未定義(Undefined)のオブジェクトを返すモックオブジェクトを生成するには：
 
 .. code-block:: php
 
@@ -141,7 +136,7 @@ method call:
         }
     }
 
-Creating a mock object with multiple query calls and a single update call:
+複数のquery呼び出しと、一回のupdate呼び出しのモックオブジェクトを生成するには：
 
 .. code-block:: php
 
@@ -155,11 +150,11 @@ Creating a mock object with multiple query calls and a single update call:
             $mock->shouldReceive('query')->andReturn(1, 2, 3);
             $mock->shouldReceive('update')->with(5)->andReturn(NULL)->once();
 
-            // ... test code here using the mock
+            // ここにモックを使ったテストコード…
         }
     }
 
-Expecting all queries to be executed before any updates:
+updateの前に、全queryが実行されるのを期待するには：
 
 .. code-block:: php
 
@@ -173,12 +168,11 @@ Expecting all queries to be executed before any updates:
             $mock->shouldReceive('query')->andReturn(1, 2, 3)->ordered();
             $mock->shouldReceive('update')->andReturn(NULL)->once()->ordered();
 
-            // ... test code here using the mock
+            // ここにモックを使ったテストコード…
         }
     }
 
-Creating a mock object where all queries occur after startup, but before finish,
-and where queries are expected with several different params:
+startupの後に全queryが実行され、finishの前に多くの異なった引数でそれらのqueryが実行されることを期待するモックを作成するには：
 
 .. code-block:: php
 
@@ -195,6 +189,6 @@ and where queries are expected with several different params:
             $db->shouldReceive('query')->with(\Mockery::pattern("/^....$/"))->andReturn(3.3)->atLeast()->once()->ordered('queries');
             $db->shouldReceive('finish')->once()->ordered();
 
-            // ... test code here using the mock
+            // ここにモックを使ったテストコード…
         }
     }

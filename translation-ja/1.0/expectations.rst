@@ -1,46 +1,35 @@
 .. index::
-    single: Expectations
+    single: ;エクスペクション
 
-Expectation Declarations
-========================
+エクスペクションの宣言
+===================
 
-.. note::
+    {note} エクスペクション（期待）を動作させるためには、``Mockery::close()``を``tearDown``や``_before``のようなコールバックメソッドの中で実行する必要があります。（Mockeryが他のフレームワークと統合されているかどうかによります。）この静的呼び出しで、現在のテストで使用したMockeryのコンテナをクリーンアップし、エクスペクションのために必要な検査タスクが実行されます。
 
-    In order for our expectations to work we MUST call ``Mockery::close()``,
-    preferably in a callback method such as ``tearDown`` or ``_before``
-    (depending on whether or not we're integrating Mockery with another
-    framework). This static call cleans up the Mockery container used by the
-    current test, and run any verification tasks needed for our expectations.
+モックオブジェクトを生成したら、それがどのように振る舞うべきか（さらに、どのように呼び出されるか）を正確に宣言し始めることになります。これはMockeryのエクスペクション宣言の役割です。
 
-Once we have created a mock object, we'll often want to start defining how
-exactly it should behave (and how it should be called). This is where the
-Mockery expectation declarations take over.
+メソッド呼び出しのエクスペクション宣言
+--------------------------------
 
-Declaring Method Call Expectations
-----------------------------------
-
-To tell our test double to expect a call for a method with a given name, we use
-the ``shouldReceive`` method:
+名前を指定し、そのメソッドが呼び出されるのを期待していることをテストダブルへ伝えるには、``shouldReceive`` メソッドを使用します。
 
 .. code-block:: php
 
     $mock = \Mockery::mock('MyClass');
     $mock->shouldReceive('name_of_method');
 
-This is the starting expectation upon which all other expectations and
-constraints are appended.
+このエクスペクションが、さらに付け加える他のエクスペクションと制約の開始点となります。
 
-We can declare more than one method call to be expected:
+期待しているメソッド呼び出しを２つ以上指定できます。
 
 .. code-block:: php
 
     $mock = \Mockery::mock('MyClass');
     $mock->shouldReceive('name_of_method_1', 'name_of_method_2');
 
-All of these will adopt any chained expectations or constraints.
+これら全て、エクスペクションや制約をチェーンとして受け付けます。
 
-It is possible to declare the expectations for the method calls, along with
-their return values:
+メソッド呼び出しのエクスペクションと、返される値を宣言することもできます。
 
 .. code-block:: php
 
@@ -50,49 +39,40 @@ their return values:
         'name_of_method_2' => 'return value 2',
     ]);
 
-There's also a shorthand way of setting up method call expectations and their
-return values:
+メソッド呼び出しのエクスペクションと戻り値を更に短く指定する方法です。
 
 .. code-block:: php
 
     $mock = \Mockery::mock('MyClass', ['name_of_method_1' => 'return value 1', 'name_of_method_2' => 'return value 2']);
 
-All of these will adopt any additional chained expectations or constraints.
+これら全て、エクスペクションや制約をチェーンとして受け付けます。
 
-We can declare that a test double should not expect a call to the given method
-name:
+テストダブルで名前を指定し、呼び出されないことを期待する宣言もできます。
 
 .. code-block:: php
 
     $mock = \Mockery::mock('MyClass');
     $mock->shouldNotReceive('name_of_method');
 
-This method is a convenience method for calling ``shouldReceive()->never()``.
+これは、``shouldReceive()->never()``呼び出しの短縮形です。
 
-Declaring Method Argument Expectations
---------------------------------------
+メソッド引数のエクスペクション宣言
+-----------------------------
 
-For every method we declare expectation for, we can add constraints that the
-defined expectations apply only to the method calls that match the expected
-argument list:
+エクスペクションを宣言した全てのメソッドに対し、期待する引数のリストと一致するメソッド呼び出しのみに適用するように制約を付け加えることができます。
 
 .. code-block:: php
 
     $mock = \Mockery::mock('MyClass');
     $mock->shouldReceive('name_of_method')
         ->with($arg1, $arg2, ...);
-    // or
+    // もしくは
     $mock->shouldReceive('name_of_method')
         ->withArgs([$arg1, $arg2, ...]);
 
-We can add a lot more flexibility to argument matching using the built in
-matcher classes (see later). For example, ``\Mockery::any()`` matches any
-argument passed to that position in the ``with()`` parameter list. Mockery also
-allows Hamcrest library matchers - for example, the Hamcrest function
-``anything()`` is equivalent to ``\Mockery::any()``.
+組み込み済みのマッチャークラス（後述）を使用し、より柔軟に追加できます。たとえば、``with()``の引数リストの中の``\Mockery::any()``マッチャーを指定すると、その位置ではどんな引数でも一致します。MockeryではHamcrestライブラリーのマッチャーも使用できます。たとえば、Hamcrest関数の``anything()``は、``\Mockery::any()``と同じ働きをします。
 
-It's important to note that this means all expectations attached only apply to
-the given method when it is called with these exact arguments:
+つまり、重要な注意点は、指定された全エクスペクションは、指定したメソッドが指定した引数で呼び出された場合のみ、適用されるということです。
 
 .. code-block:: php
 
@@ -100,16 +80,14 @@ the given method when it is called with these exact arguments:
 
     $mock->shouldReceive('foo')->with('Hello');
 
-    $mock->foo('Goodbye'); // throws a NoMatchingExpectationException
+    $mock->foo('Goodbye'); // NoMatchingExpectationExceptionが投げられる
 
-This allows for setting up differing expectations based on the arguments
-provided to expected calls.
+これにより、期待した呼び出しに渡される引数に基づいて、別々のエクスペクションを指定できるのです。
 
-Argument matching with closures
+クロージャーを使用した引数のマッチング
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Instead of providing a built-in matcher for each argument, we can provide a
-closure that matches all passed arguments at once:
+組み込み済みのマッチャーを各引数に指定する代わりに、渡された引数全部を一度にマッチングする、クロージャーを渡すことができます。
 
 .. code-block:: php
 
@@ -117,9 +95,7 @@ closure that matches all passed arguments at once:
     $mock->shouldReceive('name_of_method')
         ->withArgs(closure);
 
-The given closure receives all the arguments passed in the call to the expected
-method. In this way, this expectation only applies to method calls where passed
-arguments make the closure evaluate to true:
+メソッド呼び出し時に渡された引数を指定したグロージャーは受け取ります。このエクスペクションはメソッドがコールされ、渡した引数がクロージャーでtureと評価される場合に、適用されます。
 
 .. code-block:: php
 
@@ -132,14 +108,13 @@ arguments make the closure evaluate to true:
         return false;
     });
 
-    $mock->foo(4); // matches the expectation
-    $mock->foo(3); // throws a NoMatchingExpectationException
+    $mock->foo(4); // エクスペクションはマッチ
+    $mock->foo(3); // NoMatchingExpectationExceptionが投げられる
 
-Any, or no arguments
-^^^^^^^^^^^^^^^^^^^^
+引数を不問、引数なし
+^^^^^^^^^^^^^^^^^
 
-We can declare that the expectation matches a method call regardless of what
-arguments are passed:
+どんな引数がメソッド呼び出しで渡されてもマッチする、エクスペクションを宣言することができます。
 
 .. code-block:: php
 
@@ -147,9 +122,9 @@ arguments are passed:
     $mock->shouldReceive('name_of_method')
         ->withAnyArgs();
 
-This is set by default unless otherwise specified.
+他のものが指定されない限り、これはデフォルトで指定されます。
 
-We can declare that the expectation matches method calls with zero arguments:
+引数がないメソッドコールに一致するエクスペクションを宣言することができます。
 
 .. code-block:: php
 
@@ -157,13 +132,12 @@ We can declare that the expectation matches method calls with zero arguments:
     $mock->shouldReceive('name_of_method')
         ->withNoArgs();
 
-Declaring Return Value Expectations
------------------------------------
+戻り値のエクスペクション宣言
+-----------------------
 
-For mock objects, we can tell Mockery what return values to return from the
-expected method calls.
+モックオブジェクトに対し、期待しているメソッド呼び出しでどのような戻り値が返されるのかをMockeryへ指示できます。
 
-For that we can use the ``andReturn()`` method:
+そのためには、``andReturn()``メソッドを使用します。
 
 .. code-block:: php
 
@@ -171,11 +145,9 @@ For that we can use the ``andReturn()`` method:
     $mock->shouldReceive('name_of_method')
         ->andReturn($value);
 
-This sets a value to be returned from the expected method call.
+これは、期待しているメソッド呼び出しから返される値を指定しています。
 
-It is possible to set up expectation for multiple return values. By providing
-a sequence of return values, we tell Mockery what value to return on every
-subsequent call to the method:
+エクスペクションへ複数の戻り地を指定することも可能です。戻り地を続けて記述することで、メソッドの呼び出しごとにどんな値が返されるかをMockeryへ指示します。
 
 .. code-block:: php
 
@@ -183,10 +155,9 @@ subsequent call to the method:
     $mock->shouldReceive('name_of_method')
         ->andReturn($value1, $value2, ...)
 
-The first call will return ``$value1`` and the second call will return ``$value2``.
+最初の呼び出しでは``$value1``が返され、２つ目の呼び出しでは``$value2``が返されます。
 
-If we call the method more times than the number of return values we declared,
-Mockery will return the final value for any subsequent method call:
+宣言した戻り値より、多くの回数メソッドが呼び出された場合、Mockeryはその後のメソッドコールでは最後の値を返します。
 
 .. code-block:: php
 
@@ -199,7 +170,7 @@ Mockery will return the final value for any subsequent method call:
     $mock->foo(); // int(3)
     $mock->foo(); // int(3)
 
-The same can be achieved using the alternative syntax:
+別の記述法で、同じ指定が行えます。
 
 .. code-block:: php
 
@@ -207,26 +178,22 @@ The same can be achieved using the alternative syntax:
     $mock->shouldReceive('name_of_method')
         ->andReturnValues([$value1, $value2, ...])
 
-It accepts a simple array instead of a list of parameters. The order of return
-is determined by the numerical index of the given array with the last array
-member being returned on all calls once previous return values are exhausted.
+引数の代わりに、シンプルに配列を引き受けます。返される順番は指定した配列のインデックスの数値により決まり、指定した値が切れた場合は最後の配列のメンバーが、それ以降の全ての呼び出しで返されます。
 
-The following two options are primarily for communication with test readers:
+以下の２つの書き方も、テストを読む人とのコミュニケーションに役立つでしょう。
 
 .. code-block:: php
 
     $mock = \Mockery::mock('MyClass');
     $mock->shouldReceive('name_of_method')
         ->andReturnNull();
-    // or
+    // もしくは
     $mock->shouldReceive('name_of_method')
         ->andReturn([null]);
 
-They mark the mock object method call as returning ``null`` or nothing.
+メソッドコールは``null``を返す、もしくは何も返さないことをモックオブジェクトへ知らせます。
 
-Sometimes we want to calculate the return results of the method calls, based on
-the arguments passed to the method. We can do that with the ``andReturnUsing()``
-method which accepts one or more closure:
+ときどき、メソッドへ渡された引数に基づいて、戻り地を計算したい場合があります。１つ以上のクロージャーを受け取る、``andReturnUsing()``メソッドを使用して行えます。
 
 .. code-block:: php
 
@@ -234,13 +201,11 @@ method which accepts one or more closure:
     $mock->shouldReceive('name_of_method')
         ->andReturnUsing(closure, ...);
 
-Closures can be queued by passing them as extra parameters as for ``andReturn()``.
+クロージャーは、``andReturn()``への追加引数として渡すことで、キューすることもできます。
 
-.. note::
+    {note} 現在、``andReturnUsing()``と``andReturn()``を混ぜて使用できません。
 
-    We cannot currently mix ``andReturnUsing()`` with ``andReturn()``.
-
-If we are mocking fluid interfaces, the following method will be helpful:
+fluid interfacesをモックしている場合、以下のメソッドが役立ちます。
 
 .. code-block:: php
 
@@ -248,12 +213,12 @@ If we are mocking fluid interfaces, the following method will be helpful:
     $mock->shouldReceive('name_of_method')
         ->andReturnSelf();
 
-It sets the return value to the mocked class name.
+モックしているクラス名を戻り地として指定します。
 
-Throwing Exceptions
--------------------
+例外発生のエクスペクション
+---------------------
 
-We can tell the method of mock objects to throw exceptions:
+モックオブジェクトのメソッドで例外を投げるように指示することも可能です。
 
 .. code-block:: php
 
@@ -261,10 +226,9 @@ We can tell the method of mock objects to throw exceptions:
     $mock->shouldReceive('name_of_method')
         ->andThrow(Exception);
 
-It will throw the given ``Exception`` object when called.
+呼び出し時に、指定した``Exception``オブジェクトを投げます。
 
-Rather than an object, we can pass in the ``Exception`` class and message to
-use when throwing an ``Exception`` from the mocked method:
+オブジェクトではなく、``Exception``クラスとメッセージを引数で渡し、モックしたメソッドから``Exception``を投げることもできます。
 
 .. code-block:: php
 
@@ -272,53 +236,38 @@ use when throwing an ``Exception`` from the mocked method:
     $mock->shouldReceive('name_of_method')
         ->andThrow(exception_name, message);
 
-.. _expectations-setting-public-properties:
+publicプロパティの設定
+--------------------
 
-Setting Public Properties
--------------------------
-
-Used with an expectation so that when a matching method is called, we can cause
-a mock object's public property to be set to a specified value, by using
-``andSet()`` or ``set()``:
+メソッド呼び出しに一致するエクスペクションを使用し、``andSet()``か``set()``により、モックオブジェクトのpublicプロパティへ特定の値をセットできます。
 
 .. code-block:: php
 
     $mock = \Mockery::mock('MyClass');
     $mock->shouldReceive('name_of_method')
         ->andSet($property, $value);
-    // or
+    // もしくは
     $mock->shouldReceive('name_of_method')
         ->set($property, $value);
 
-In cases where we want to call the real method of the class that was mocked and
-return its result, the ``passthru()`` method tells the expectation to bypass
-a return queue:
+モックしているクラスの本当のメソッドを呼び出し、その結果を返したい場合は、``passthru()``メソッドで戻り値のキューをバイパスするようにエクセプションへ指示します。
 
 .. code-block:: php
 
     passthru()
 
-It allows expectation matching and call count validation to be applied against
-real methods while still calling the real class method with the expected
-arguments.
+本当のメソッドに対しマッチングと呼び出し回数のバリデーションが利用でき、その場合も本当のクラスメソッドを期待する引数で呼び出します。
 
-Declaring Call Count Expectations
----------------------------------
+呼び出し回数のエクスペクション宣言
+-----------------------------
 
-Besides setting expectations on the arguments of the method calls, and the
-return values of those same calls, we can set expectations on how many times
-should any method be called.
+メソッド呼び出しの引数へエクスペクションを指定し、同じメソッド呼び出しに戻り値を指定するのに加え、メソッドが呼び出される回数のエクスペクションを指定することができます。
 
-When a call count expectation is not met, a
-``\Mockery\Expectation\InvalidCountException`` will be thrown.
+呼び出し回数のエクスペクションが一致しなかった場合、``\Mockery\Expectation\InvalidCountException``が投げられます。
 
-.. note::
+    {note} たとえば、PHPUnitの``tearDown()``メソッドなどで、テストの最後に``\Mockery::close()``を絶対に呼び出す必要があります。呼び出さないとMockeryはモックオブジェクトに対して実行された呼び出しを検査しません。
 
-    It is absolutely required to call ``\Mockery::close()`` at the end of our
-    tests, for example in the ``tearDown()`` method of PHPUnit. Otherwise
-    Mockery will not verify the calls made against our mock objects.
-
-We can declare that the expected method may be called zero or more times:
+メソッドの呼び出し回数を問わない宣言を行うことができます。
 
 .. code-block:: php
 
@@ -326,10 +275,9 @@ We can declare that the expected method may be called zero or more times:
     $mock->shouldReceive('name_of_method')
         ->zeroOrMoreTimes();
 
-This is the default for all methods unless otherwise set.
+他のものが指定されない場合、これが全メソッドのデフォルトとなります。
 
-To tell Mockery to expect an exact number of calls to a method, we can use the
-following:
+特定の回数メソッドが呼ばれることを期待する場合は、以下の要領でMockeryに指示します。
 
 .. code-block:: php
 
@@ -337,11 +285,11 @@ following:
     $mock->shouldReceive('name_of_method')
         ->times($n);
 
-where ``$n`` is the number of times the method should be called.
+``$n``はメソッドが呼び出されるべき回数です。
 
-A couple of most common cases got their shorthand methods.
+よく使用される２つの場合は、短縮メソッドが用意されています。
 
-To declare that the expected method must be called one time only:
+期待しているメソッドが一回のみ呼び出されることを宣言するには：
 
 .. code-block:: php
 
@@ -349,7 +297,7 @@ To declare that the expected method must be called one time only:
     $mock->shouldReceive('name_of_method')
         ->once();
 
-To declare that the expected method must be called two times:
+期待しているメソッドが２回呼び出されることを宣言するには：
 
 .. code-block:: php
 
@@ -357,7 +305,7 @@ To declare that the expected method must be called two times:
     $mock->shouldReceive('name_of_method')
         ->twice();
 
-To declare that the expected method must never be called:
+期待しているメソッドが、呼び出されないことを宣言するには：
 
 .. code-block:: php
 
@@ -365,13 +313,12 @@ To declare that the expected method must never be called:
     $mock->shouldReceive('name_of_method')
         ->never();
 
-Call count modifiers
-^^^^^^^^^^^^^^^^^^^^
+呼び出し回数モディファイヤー
+^^^^^^^^^^^^^^^^^^^^^^^
 
-The call count expectations can have modifiers set.
+呼び出し回数エクスペクションには、モデファイヤーが使えます。
 
-If we want to tell Mockery the minimum number of times a method should be called,
-we use ``atLeast()``:
+もし、Mockeryにメソッドの最低実行回数を指定したい場合は、``atLeast()``を使います。
 
 .. code-block:: php
 
@@ -380,11 +327,9 @@ we use ``atLeast()``:
         ->atLeast()
         ->times(3);
 
-``atLeast()->times(3)`` means the call must be called at least three times
-(given matching method args) but never less than three times.
+``atLeast()->times(3)``は、（指定したメソッド引数とマッチした）呼び出しが最低でも３回実行されることを意味しています。
 
-Similarly, we can tell Mockery the maximum number of times a method should be
-called, using ``atMost()``:
+同様に、実行すべき最大実行回数をMockeryへ指示できます。``atMost()``を使用してください。
 
 .. code-block:: php
 
@@ -393,10 +338,9 @@ called, using ``atMost()``:
         ->atMost()
         ->times(3);
 
-``atMost()->times(3)`` means the call must be called no more than three times.
-If the method gets no calls at all, the expectation will still be met.
+``atMost()->times(3)``は、４回以上呼び出されないことを意味しています。メソッドが一回も実行されない場合、このエクスペクションには一致します。
 
-We can also set a range of call counts, using ``between()``:
+呼び出し回数の範囲を``between()``で指定することもできます。
 
 .. code-block:: php
 
@@ -404,61 +348,51 @@ We can also set a range of call counts, using ``between()``:
     $mock->shouldReceive('name_of_method')
         ->between($min, $max);
 
-This is actually identical to using ``atLeast()->times($min)->atMost()->times($max)``
-but is provided as a shorthand. It may be followed by a ``times()`` call with no
-parameter to preserve the APIs natural language readability.
+実際にこれは、``atLeast()->times($min)->atMost()->times($max)``と同じですが、短縮されています。
+引数のない``times()``を続けて、APIの自然言語的読みやすさを保つことができます。
 
-Expectation Declaration Utilities
----------------------------------
+エクスペクション宣言ユーティリティー
+------------------------------
 
-Declares that this method is expected to be called in a specific order in
-relation to similarly marked methods.
+似たような指定のメソッドと関連して、特定の順番でメソッドが呼び出されるのを期待する宣言ができます。
 
 .. code-block:: php
 
     ordered()
 
-The order is dictated by the order in which this modifier is actually used when
-setting up mocks.
+順番はモックを準備するときに、このモディファイヤーが実際に使用された順番で決定されます。
 
-Declares the method as belonging to an order group (which can be named or
-numbered). Methods within a group can be called in any order, but the ordered
-calls from outside the group are ordered in relation to the group:
+（名前や番号で指定される）オーダーグループに従い、メソッドを宣言できます。グループ内のメソッドは、どんな順番でも呼び出されますが、グループ外の順番は、他のグループとの順番通りになる必要があります。
 
 .. code-block:: php
 
     ordered(group)
 
-We can set up so that method1 is called before group1 which is in turn called
-before method2.
+メソッド２の前に実行されるグループ１，そのグループ１より前に実行されるメソッド１という指定が可能なわけです。
 
-When called prior to ``ordered()`` or ``ordered(group)``, it declares this
-ordering to apply across all mock objects (not just the current mock):
+``ordered()``や``ordered(group)``を呼び出す前に、この順番は現在のモックオブジェクトのみに適用されるわけでなく、全モックオブジェクト間の順番であると宣言できます。
 
 .. code-block:: php
 
     globally()
 
-This allows for dictating order expectations across multiple mocks.
+これは、複数のモック間での実行順エクスペクションを命令するものです。
 
-The ``byDefault()`` marks an expectation as a default. Default expectations are
-applied unless a non-default expectation is created:
+``byDefault()``により、デフォルトのエクスペクションを指定できます。デフォルトでないエクスペクションが作成されない限り、このデフォルトエクスペクションが適用されます。
 
 .. code-block:: php
 
     byDefault()
 
-These later expectations immediately replace the previously defined default.
-This is useful so we can setup default mocks in our unit test ``setup()`` and
-later tweak them in specific tests as needed.
+エクスペクションは即時に以前のデフォルトエクスペクションに置き換えられます。デフォルトモックをユニットテスト``setup()``で用意し、特定のテストで必要になれば、後ほど調整できるため便利です。
 
-Returns the current mock object from an expectation chain:
+エクスペクションのチェーンで、現在のモックオブジェクトを返す場合は：
 
 .. code-block:: php
 
     getMock()
 
-Useful where we prefer to keep mock setups as a single statement, e.g.:
+一行でモックの準備を行いたい場合に便利です。たとえば：
 
 .. code-block:: php
 

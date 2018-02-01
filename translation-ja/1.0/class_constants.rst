@@ -14,7 +14,7 @@ While supporting class constants in Mockery would be possible, it does require
 an awful lot of work, for a small number of use cases.
 
 We can, however, deal with these constants in a way supported by Mockery - by
-using :ref:`creating-test-doubles-named-mocks`.
+using `名前付きモック<creating_test_doubles.html#名前付きモック>`_
 
 A named mock is a test double that has a name of the class we want to mock, but
 under it is a stubbed out class that mimics the real class with canned responses.

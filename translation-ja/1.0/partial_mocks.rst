@@ -1,24 +1,18 @@
 .. index::
-    single: Mocking; Partial Mocks
+    single: パーシャルモック
 
-Creating Partial Mocks
+パーシャルモックの生成
 ======================
 
-Partial mocks are useful when we only need to mock several methods of an
-object leaving the remainder free to respond to calls normally (i.e.  as
-implemented). Mockery implements three distinct strategies for creating
-partials. Each has specific advantages and disadvantages so which strategy we
-use will depend on our own preferences and the source code in need of
-mocking.
+パーシャル（部分）モックは、あるオブジェクトのいくつかのメソッドのみをモックし、残りは通常の呼び出し通り（つまり、実装されている通り）にレスポンスさせたい必要がある場合に便利です。Mockeryはパーシャル生成の明確な３つの戦略を実装しています。それぞれは特定の利点と欠点があるため、モックの必要に応じて、好みとソースコードに基づいて使用する戦略を選びます。
 
-We have previously talked a bit about :ref:`creating-test-doubles-partial-test-doubles`,
-but we'd like to expand on the subject a bit here.
+前に`パーシャルテストダブル<creating_test_doubles.htm#パーシャルテストダブル>`_ で少し取り扱っていますが、ここでもう少しこの主題を取り上げましょう。
 
-#. Runtime partial test doubles
-#. Generated partial test doubles
-#. Proxied Partial Mock
+#. ランタイムパーシャルテストダブル
+#. 生成パーシャルテストダブル
+#. プロキシパーシャルモック
 
-Runtime partial test doubles
+ランタイムパーシャルテストダブル
 ----------------------------
 
 A runtime partial test double, also known as a passive partial mock, is a kind
@@ -43,9 +37,9 @@ usage of runtime partial test doubles.
     The ``makePartial()`` method is identical to the original ``shouldDeferMissing()``
     method which first introduced this Partial Mock type. To know more about
     ``shouldDeferMissing()`` method - see the chapter on
-    :ref:`creating-test-doubles-behavior-modifiers`.
+    `振る舞いモディファイヤー<creating_test_doubles.html#振る舞いモディファイヤー>`_
 
-Generated Partial Test Doubles
+生成パーシャルテストダブル
 ------------------------------
 
 A generated partial test double, also known as a traditional partial mock,
@@ -69,7 +63,7 @@ may rely on those!
 
     $mock = \Mockery::mock('MyNamespace\MyClass[foo]', array($arg1, $arg2));
 
-See the :ref:`creating-test-doubles-constructor-arguments` section to read up
+See the `コンストラクターの引数<creating_test_doubles.html#コンストラクターの引数>`_ section to read up
 on them.
 
 .. note::
@@ -77,7 +71,7 @@ on them.
     Even though we support generated partial test doubles, we do not recommend
     using them.
 
-Proxied Partial Mock
+プロキシパーシャルモック
 --------------------
 
 A proxied partial mock is a partial of last resort. We may encounter a class
@@ -97,8 +91,8 @@ marked final since the Proxy is not subject to those limitations. The tradeoff
 should be obvious - a proxied partial will fail any typehint checks for the
 class being mocked since it cannot extend that class.
 
-Special Internal Cases
-----------------------
+特別な内部クラス
+--------------
 
 All mock objects, with the exception of Proxied Partials, allows us to make
 any expectation call to the underlying real class method using the ``passthru()``

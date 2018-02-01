@@ -1,127 +1,93 @@
 .. index::
-    single: Reference; Spies
+    single: Reference; スパイ
 
-Spies
+スパイ
 =====
 
-Spies are a type of test doubles, but they differ from stubs or mocks in that,
-that the spies record any interaction between the spy and the System Under Test
-(SUT), and allow us to make assertions against those interactions after the fact.
+スパイはテストダブルの一タイプですが、スタブやモックとは異なり、スパイはスパイとSUT(System Under Test)間のやり取りを記憶し、後ほどやり取りをアサートできるようにするものです。
 
-Creating a spy means we don't have to set up expectations for every method call
-the double might receive during the test, some of which may not be relevant to
-the current test. A spy allows us to make assertions about the calls we care
-about for this test only, reducing the chances of over-specification and making
-our tests more clear.
+スパイを生成することが意味するのは、そのダブルがテストの間に受け取るメソッドコールに対してエクスペクションを指定できないということです。エクスペクションのいくつかは、現在のテストとは関連がないことがあります。スパイはこのテストに対してのみ調べたい呼び出しをアサートでき、指定のしすぎになる機会を減らし、テストをより明確にできます。
 
-Spies also allow us to follow the more familiar Arrange-Act-Assert or
-Given-When-Then style within our tests. With mocks, we have to follow a less
-familiar style, something a long the lines of Arrange-Expect-Act-Assert, where
-we have to tell our mocks what to expect before we act on the sut, then assert
-that those expectations where met:
+スパイはテストにおける、よりわかりやすいArrange-Act-Assertや、Given-When-Thenスタイルにより適しています。モックではわかりやすいスタイルが薄れ、Arrange-Expect-Act-Assertの長い行になり、SUTに対し行動を起こす前に何を期待しているのかモックへ指示し、それからエクスペクションが一致したことをアサートする必要があります。
 
 .. code-block:: php
 
-    // arrange
+    // arrange（準備）
     $mock = \Mockery::mock('MyDependency');
     $sut = new MyClass($mock);
 
-    // expect
+    // expect（期待）
     $mock->shouldReceive('foo')
         ->once()
         ->with('bar');
 
-    // act
+    // act（実行）
     $sut->callFoo();
 
-    // assert
+    // assert（アサート）
     \Mockery::close();
 
-Spies allow us to skip the expect part and move the assertion to after we have
-acted on the SUT, usually making our tests more readable:
+スパイでは期待(expect）の部分を飛ばせ、SUTに対して実行した後にアサートへ移動でき、通常テストがより読みやすくなります。
 
 .. code-block:: php
 
-    // arrange
+    // arrange（準備）
     $spy = \Mockery::spy('MyDependency');
     $sut = new MyClass($spy);
 
-    // act
+    // act（実行）
     $sut->callFoo();
 
-    // assert
+    // assert（アサート）
     $spy->shouldHaveReceived()
         ->foo()
         ->with('bar');
 
-On the other hand, spies are far less restrictive than mocks, meaning tests are
-usually less precise, as they let us get away with more. This is usually a
-good thing, they should only be as precise as they need to be, but while spies
-make our tests more intent-revealing, they do tend to reveal less about the
-design of the SUT. If we're having to setup lots of expectations for a mock,
-in lots of different tests, our tests are trying to tell us something - the SUT
-is doing too much and probably should be refactored. We don't get this with
-spies, they simply ignore the calls that aren't relevant to them.
+逆に言えば、スパイはモックより非常に限定的です。つまりテストは通常さほど精密ではなく、スパイは複雑になることを防いでくれます。これは通常は良いことで、必要に応じて精密に行うべきなのです。スパイはテストの意図を明確にする一方で、SUTの設計の明確さを少し隠す傾向があります。多くの異なったテストで、モックに多くのエクスペクションを指定していたら、テストは私達に何かを伝えようとしています。SUTはやりすぎていて、多分リファクタリングが必要だということを。スパイでは、これはわかりません。なぜなら、関連ない呼び出しをシンプルに無視するからです。
 
-Another downside to using spies is debugging. When a mock receives a call that
-it wasn't expecting, it immediately throws an exception (failing fast), giving
-us a nice stack trace or possibly even invoking our debugger.  With spies, we're
-simply asserting calls were made after the fact, so if the wrong calls were made,
-we don't have quite the same just in time context we have with the mocks.
+スパイの良くないもう一つの面は、デバッグです。機内市内呼び出しを受けると、モックはすぐに例外を投げ、きれいなスタックトレースか、デバッガーを起動することさえあります。（素早く失敗します。）スパイの場合、実行後にシンプルに呼び出しをアサートするので、間違った呼び出しが行われても、モックのようにその時点で同じような手助けの情報を得られません。
 
-Finally, if we need to define a return value for our test double, we can't do
-that with a spy, only with a mock object.
+最後に、テストダブルに戻り地を定義する必要がある場合、スパイでは行えません。モックオブジェクトだけで行えます。
 
-.. note::
+    {note} このドキュメンページは、Dave Marshallのブログ、タイトルは`"Mockery Spies" <https://davedevelopment.co.uk/2014/10/09/mockery-spies.html>`_,から取ったものです。Dave MarshallはMockeryのスパイの初めの作者です。
 
-    This documentation page is an adaption of the blog post titled
-    `"Mockery Spies" <https://davedevelopment.co.uk/2014/10/09/mockery-spies.html>`_,
-    published by Dave Marshall on his blog. Dave is the original author of spies
-    in Mockery.
-
-Spies Reference
+スパイリファレンス
 ---------------
 
-To verify that a method was called on a spy, we use the ``shouldHaveReceived()``
-method:
+スパイでメソッドコールを確認する場合、``shouldHaveReceived()``メソッドを使用します。
 
 .. code-block:: php
 
     $spy->shouldHaveReceived('foo');
 
-To verify that a method was **not** called on a spy, we use the
-``shouldNotHaveReceived()`` method:
+スパイでメソッドが呼び出され **ない** ことを確認するには、``shouldNotHaveReceived()``メソッドを使用します。
 
 .. code-block:: php
 
     $spy->shouldNotHaveReceived('foo');
 
-We can also do argument matching with spies:
+スパイスでも、引数のマッチングが行なえます。
 
 .. code-block:: php
 
     $spy->shouldHaveReceived('foo')
         ->with('bar');
 
-Argument matching is also possible by passing in an array of arguments to
-match:
+引数のマッチングは、マッチさせる引数の配列を渡すことでも可能です。
 
 .. code-block:: php
 
     $spy->shouldHaveReceived('foo', ['bar']);
 
-Although when verifying a method was not called, the argument matching can only
-be done by supplying the array of arguments as the 2nd argument to the
-``shouldNotHaveReceived()`` method:
+メソッドが呼び出されないことを検査する場合でも、``shouldNotHaveReceived()``メソッドの第２引数に引数の配列を指定することで、検査できます。
 
 .. code-block:: php
 
     $spy->shouldNotHaveReceived('foo', ['bar']);
 
-This is due to Mockery's internals.
+これはMockeryの内部構造によります。
 
-Finally, when expecting calls that should have been received, we can also verify
-the number of calls:
+最後に、呼び出しの受け取りを期待する時、実行回数を調べることもできます。
 
 .. code-block:: php
 
@@ -129,20 +95,19 @@ the number of calls:
         ->with('bar')
         ->twice();
 
-Alternative shouldReceive syntax
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+shouldReceiveの別型
+^^^^^^^^^^^^^^^^^^
 
-As of Mockery 1.0.0, we support calling methods as we would call any PHP method,
-and not as string arguments to Mockery ``should*`` methods.
+Mockerのshould*メソッドのように文字列ではなく、Mockery1.0.0よりPHPメソッドを呼び出すような指定方法をサポートします。
 
-In cases of spies, this only applies to the ``shouldHaveReceived()`` method:
+スパイスの場合、これは``shouldHaveReceived()``メソッドだけに適用されます。
 
 .. code-block:: php
 
     $spy->shouldHaveReceived()
         ->foo('bar');
 
-We can set expectation on number of calls as well:
+同様に、呼び出し回数のエクスペクションをセットできます。
 
 .. code-block:: php
 
@@ -150,5 +115,4 @@ We can set expectation on number of calls as well:
         ->foo('bar')
         ->twice();
 
-Unfortunately, due to limitations we can't support the same syntax for the
-``shouldNotHaveReceived()`` method.
+残念ながら制限により、``shouldNotHaveReceived()``メソッドに対して同様なサポートはできません。

@@ -1,48 +1,19 @@
 .. index::
-    single: Mockery; Gotchas
+    single: 注意点
 
-Gotchas!
+注意点
 ========
 
-Mocking objects in PHP has its limitations and gotchas. Some functionality
-can't be mocked or can't be mocked YET! If you locate such a circumstance,
-please please (pretty please with sugar on top) create a new issue on GitHub
-so it can be documented and resolved where possible. Here is a list to note:
+PHPでのモックオブジェクトには、制限と注意点があります。いくつかの機能はモックできないか、もしくは **いまのところ(!)** モックできません。そうした状況に出会ったら、ドキュメント化するか、可能であれば解決できるように、どうか、どうか、GitHubでissueを作成してください。注意点のリストは以下の通りです。
 
-1. Classes containing public ``__wakeup()`` methods can be mocked but the
-   mocked ``__wakeup()`` method will perform no actions and cannot have
-   expectations set for it. This is necessary since Mockery must serialize and
-   unserialize objects to avoid some ``__construct()`` insanity and attempting
-   to mock a ``__wakeup()`` method as normal leads to a
-   ``BadMethodCallException`` been thrown.
+1. Publicの``__wakeup()``メソッドを含むクラスはモックできますが、モックした``__wakeup()``メソッドは何も動作せず、エクスペクションを指定することもできません。これはMockeryが``__construct()``の愚行を無視するため、オブジェクトをシリアライズ／非シリアライズする必要があり、``__wakeup()``メソッドをモックしようと試みると、通常は``BadMethodCallException``が投げられる事態を引き起こすからです。
 
-2. Classes using non-real methods, i.e. where a method call triggers a
-   ``__call()`` method, will throw an exception that the non-real method does
-   not exist unless you first define at least one expectation (a simple
-   ``shouldReceive()`` call would suffice). This is necessary since there is
-   no other way for Mockery to be aware of the method name.
+2. たとえば、``__call()``メソッドを起動するような、本物ではないメソッドを使用しているクラスは、最低１つのエクスペクションが定義されない限り、例外を投げます。（シンプルに``shouldReceive()``呼び出すだけで、十分です。）なぜなら、Mockeryにはそのメソッド名を認識する手段がないためです。
 
-3. Mockery has two scenarios where real classes are replaced: Instance mocks
-   and alias mocks. Both will generate PHP fatal errors if the real class is
-   loaded, usually via a require or include statement. Only use these two mock
-   types where autoloading is in place and where classes are not explicitly
-   loaded on a per-file basis using ``require()``, ``require_once()``, etc.
+3. Mockeryは本当のクラスを置き換える、２つのシナリオを持っています。インスタンスモックとエイリアスモックです。通常require文かinclude文により実クラスがロードされますが、実クラスがロード済みの場合、両方のシナリオともPHPのfatalエラーを発生させます。これら２つのモックタイプは、オートローディングが使用されており、``require()``や``require_once()``などを使用した、ファイルベースによる明示的なクラスロードが行われない場合に使用します。
 
-4. Internal PHP classes are not entirely capable of being fully analysed using
-   ``Reflection``. For example, ``Reflection`` cannot reveal details of
-   expected parameters to the methods of such internal classes. As a result,
-   there will be problems where a method parameter is defined to accept a
-   value by reference (Mockery cannot detect this condition and will assume a
-   pass by value on scalars and arrays). If references as internal class
-   method parameters are needed, you should use the
-   ``\Mockery\Configuration::setInternalClassMethodParamMap()`` method.
+4. 内部PHPクラスは、``Reflection``を使用して完全に分析されません。たとえば、``Reflection``はこうした内部クラスのメソッドに対し期待されている引数の詳細を明確にできません。その結果、参照による値を受け取るように定義されているメソッドパラーターで問題が起きます。（Mockeryはこうした状態を認知できませんし、値がスカラーか配列で渡されると仮定しています。）内部クラスのメソッド引数の参照が必要であれば、``\Mockery\Configuration::setInternalClassMethodParamMap()``メソッドを使用してください。
 
-5. Creating a mock implementing a certain interface with incorrect case in the
-   interface name, and then creating a second mock implementing the same
-   interface, but this time with the correct case, will have undefined behavior
-   due to PHP's ``class_exists`` and related functions being case insensitive.
-   Using the ``::class`` keyword in PHP can help you avoid these mistakes.
+5. 実装するインターフェイス名で、大文字小文字を間違えたモックを生成し、次に同じインターフェイスを今度は間違えずに実装したモックを生成すると、PHPの``class_exists``と関連するファンクションが大文字小文字を識別しないため、動作が定まりません。こうした間違いを防ぐためには、PHPの``::class``キーワードを使用してください。
 
-The gotchas noted above are largely down to PHP's architecture and are assumed
-to be unavoidable. But - if you figure out a solution (or a better one than
-what may exist), let us know!
+上記の注意点は、PHPのアーキテクチャによるもので、避けがたいと考えられます。ですが皆さんが、もし解決策（もしくは既存の方法より良いやり方）を見つけ出したら、教えてください。

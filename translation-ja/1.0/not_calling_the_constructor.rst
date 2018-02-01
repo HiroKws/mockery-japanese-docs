@@ -49,7 +49,7 @@ A better approach is to use runtime partial doubles:
 This is one of the reason why we don't recommend using generated partial test
 doubles, but if possible, always use the runtime partials.
 
-Read more about :ref:`creating-test-doubles-partial-test-doubles`.
+Read more about `パーシャルテストダブル<creating_test_doubles.htm#パーシャルテストダブル>`_.
 
 .. note::
 

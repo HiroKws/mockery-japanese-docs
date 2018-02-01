@@ -1,22 +1,15 @@
 .. index::
-    single: Installation
+    single: インストール
 
-Installation
+インストール
 ============
 
-Mockery can be installed using Composer or by cloning it from its GitHub
-repository. These two options are outlined below.
+MockeryはComposerを使用するか、GitHubリポジトリーをクローンすることでインストールできます。以下に２つの選択肢の概略を説明します。
 
 Composer
 --------
 
-You can read more about Composer on `getcomposer.org <https://getcomposer.org>`_.
-To install Mockery using Composer, first install Composer for your project
-using the instructions on the `Composer download page <https://getcomposer.org/download/>`_.
-You can then define your development dependency on Mockery using the suggested
-parameters below. While every effort is made to keep the master branch stable,
-you may prefer to use the current stable version tag instead (use the
-``@stable`` tag).
+Composerについての詳細は、`getcomposer.org <https://getcomposer.org>`_で確認できます。ComposerでMockeryをインストールするには、最初に`Composer download page <https://getcomposer.org/download/>`_の説明に従い、プロジェクトで使用できるようにComposerをインストールします。次に、以下に示すパラメータを使用し、Mockeryを開発時の依存パッケージとして定義します。masterブランチを安定に保とうと努力をしていますが、お望みならば現在の安定バージョンを代わりに使用してください。``@stable``タグを指定します。
 
 .. code-block:: json
 
@@ -26,18 +19,15 @@ you may prefer to use the current stable version tag instead (use the
         }
     }
 
-To install, you then may call:
+次にインストールするために実行します。
 
 .. code-block:: bash
 
     php composer.phar update
 
-This will install Mockery as a development dependency, meaning it won't be
-installed when using ``php composer.phar update --no-dev`` in production.
+これにより、Mockeryは開発時の依存パッケージとしてインストールされます。つまり、プロダクション環境で``php composer.phar update --no-dev``を使用する場合は、インストールされません。
 
 Git
 ---
 
-The Git repository hosts the development version in its master branch. You can
-install this using Composer by referencing ``dev-master`` as your preferred
-version in your project's ``composer.json`` file as the earlier example shows.
+Gitリポジトリのmasterブランチには、開発バージョンをホストしています。プロジェクトの``composer.json``ファイルに、前記のようにインストールしたいバージョンとして``dev-master``を指定すると、この開発版をインストールできます。

@@ -35,7 +35,7 @@ Mockery handles references correctly for all methods where it can analyse
 the parameter (using ``Reflection``) to see if it is passed by reference. To
 mock how a reference is manipulated by the class method, we can use a closure
 argument matcher to manipulate it, i.e. ``\Mockery::on()`` - see the
-:ref:`argument-validation-complex-argument-validation` chapter.
+`複雑な引数のバリデーション<argument_validation.html#複雑な引数のバリデーション>`_ chapter.
 
 There is an exception for internal PHP classes where Mockery cannot analyse
 method parameters using ``Reflection`` (a limitation in PHP). To work around

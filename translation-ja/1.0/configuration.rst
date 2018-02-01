@@ -1,48 +1,29 @@
 .. index::
-    single: Mockery; Configuration
+    single: 設定
 
-Mockery Global Configuration
-============================
+Mockeryグローバル設定
+===================
 
-To allow for a degree of fine-tuning, Mockery utilises a singleton
-configuration object to store a small subset of core behaviours. The three
-currently present include:
+設定を多少変更できるように、Mockeryは主な振る舞いの小さなサブセットを保持する、シングルトンの設定オブジェクトを使用しています。現在、３項目用意しています。
 
-* Option to allow/disallow the mocking of methods which do not actually exist
-  fulfilled (i.e. unused)
-* Setter/Getter for added a parameter map for internal PHP class methods
-  (``Reflection`` cannot detect these automatically)
+* 実際に存在ができない（例えば未使用）のメソッドに対するモックを許可／非許可へ指定するオプション。
+* 内部PHPメソッドに対するパラメータマップを追加するためのセッター／ゲッター。（``Reflection``では自動的に突き止められない。）
 
-By default, the first behaviour is enabled. Of course, there are
-situations where this can lead to unintended consequences. The mocking of
-non-existent methods may allow mocks based on real classes/objects to fall out
-of sync with the actual implementations, especially when some degree of
-integration testing (testing of object wiring) is not being performed.
+最初の動作はデフォルトで許可されています。もちろん、これにより意図しない副作用を引き起こしてしまう状況はあり得ます。存在しないメソッドに対するモックは、特に多少の統合テスト（オブジェクト結合のテスト）も実行されない場合、実際の実装と同期していない実クラス／オブジェクトに基づいたモックを許してしまいます。
 
-You may allow or disallow this behaviour (whether for whole test suites or
-just select tests) by using the following call:
+この振る舞いの許可／不許可を指定するには、次のように呼び出してください。（テストスーツ全体、もしくは限定されたテストのみにかかわらず）
 
 .. code-block:: php
 
     \Mockery::getConfiguration()->allowMockingNonExistentMethods(bool);
 
-Passing a true allows the behaviour, false disallows it. It takes effect
-immediately until switched back. If the behaviour is detected when not allowed,
-it will result in an Exception being thrown at that point. Note that disallowing
-ths behaviour should be carefully considered since it necessarily removes at
-least some of Mockery's flexibility.
+Trueを指定した場合はこの振る舞いを許可します。Falseでは非許可にします。指定し直すまで、すぐに有効になります。許可されない場合が生じると、この振る舞いはその時点で例外を投げます。この振る舞いを非許可にするということは、少なくともMockeryの柔軟性が損なわれてしまうため、十分に考慮してください。
 
-The other two methods are:
+残りの２つを見てみましょう。
 
 .. code-block:: php
 
     \Mockery::getConfiguration()->setInternalClassMethodParamMap($class, $method, array $paramMap)
     \Mockery::getConfiguration()->getInternalClassMethodParamMap($class, $method)
 
-These are used to define parameters (i.e. the signature string of each) for the
-methods of internal PHP classes (e.g. SPL, or PECL extension classes like
-ext/mongo's MongoCollection. Reflection cannot analyse the parameters of internal
-classes. Most of the time, you never need to do this. It's mainly needed where an
-internal class method uses pass-by-reference for a parameter - you MUST in such
-cases ensure the parameter signature includes the ``&`` symbol correctly as Mockery
-won't correctly add it automatically for internal classes.
+これらはPHP内部クラス（例えばSPLや。ext/mongoのMongoCollection PECL拡張クラス）に対する引数を定義（例えばそれぞれ文字列であるとか）するために使用します。リフレクションは内部クラスの引数を分析できません。ほとんどの場合、みなさんがこれを使用する必要は全くありません。主に必要となるのは、内部クラスのメソッドが参照渡しを使用している場合です。この場合、Mockeryは内部クラスに対し自動的に追加しないため、引数の指定に``&``を正しく含めてください。

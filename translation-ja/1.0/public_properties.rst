@@ -9,7 +9,7 @@ a public property and its value on any mock object. The second is that we can
 use the expectation methods ``set()`` and ``andSet()`` to set property values if
 that expectation is ever met.
 
-You can read more about :ref:`expectations-setting-public-properties`.
+You can read more about `publicプロパティの設定<expectations.html#publicプロパティの設定>`_
 
 .. note::
 

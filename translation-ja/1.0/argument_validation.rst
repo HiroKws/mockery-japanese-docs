@@ -1,39 +1,20 @@
 .. index::
-    single: Argument Validation
+    single: 引数のバリデーション
 
-Argument Validation
+引数のバリデーション
 ===================
 
-The arguments passed to the ``with()`` declaration when setting up an
-expectation determine the criteria for matching method calls to expectations.
-Thus, we can setup up many expectations for a single method, each
-differentiated by the expected arguments. Such argument matching is done on a
-"best fit" basis.  This ensures explicit matches take precedence over
-generalised matches.
+エクスペクションの準備時に、``with()``宣言へ渡された引数は、エクスペクションと一致するメソッドの基準として判定されます。それにより、期待する引数がそれぞれ異なる、多くのエクスペクションを一つのメソッドに指定できます。このような引数のマッチングは、「一番フィットする」を基本に行われます。これにより、曖昧なマッチャーより明確なマッチャーが優先されます。
 
-An explicit match is merely where the expected argument and the actual
-argument are easily equated (i.e. using ``===`` or ``==``). More generalised
-matches are possible using regular expressions, class hinting and the
-available generic matchers. The purpose of generalised matchers is to allow
-arguments be defined in non-explicit terms, e.g. ``Mockery::any()`` passed to
-``with()`` will match **any** argument in that position.
+明確なマッチとは、引数が期待され、実際の引数が（たとえば、``===``や``==``を使用し）簡単に同一視できることを単に示します。より曖昧なマッチャーは、正規表現やクラスヒント、一般的なマッチャー などです。曖昧なマッチャーの目的は、明確でない場合の引数を定義することで、``with()``にその場所の **どんな** 引数とも一致する``Mockery::any()``が一例です。
 
-Mockery's generic matchers do not cover all possibilities but offers optional
-support for the Hamcrest library of matchers. Hamcrest is a PHP port of the
-similarly named Java library (which has been ported also to Python, Erlang,
-etc). By using Hamcrest, Mockery does not need to duplicate Hamcrest's already
-impressive utility which itself promotes a natural English DSL.
+Mockeryの曖昧マッチャーは、可能性を全てカバーできませんが、マッチャーのHamcrestライブラリーをサポートしています。Hamcrestは同じ名前のJava（やPython、Erlangなど）のライブラリーをPHPへ移植したものです。Hamcrestを使用することで、MockeryはHamcrestが宣伝している自然な英語のDSLという印象深い利点を再開発せずに済んでいます。
 
-The examples below show Mockery matchers and their Hamcrest equivalent, if there
-is one. Hamcrest uses functions (no namespacing).
+以下の例では、Mocheryのマッチャーと、存在する場合はHamcrestの同じ働きのマッチャーを示します。Hamcrestは（名前空間なしの）関数を使用しています。
 
-.. note::
+    {note} グローバルなHamcrest関数を使用したくない場合、静的メソドッドは全て``\Hamcrest\Matchers``クラスを通じて利用できます。たとえば、``identicalTo($arg)``は、``\Hamcrest\Matchers::identicalTo($arg)``とおなじです。
 
-    If you don't wish to use the global Hamcrest functions, they are all exposed
-    through the ``\Hamcrest\Matchers`` class as well, as static methods. Thus,
-    ``identicalTo($arg)`` is the same as ``\Hamcrest\Matchers::identicalTo($arg)``
-
-The most common matcher is the ``with()`` matcher:
+最も汎用されるマッチャーは、``with()``です。
 
 .. code-block:: php
 
@@ -41,14 +22,9 @@ The most common matcher is the ``with()`` matcher:
     $mock->shouldReceive('foo')
         ->with(1):
 
-It tells mockery that it should receive a call to the ``foo`` method with the
-integer ``1`` as an argument. In cases like this, Mockery first tries to match
-the arguments using ``===`` (identical) comparison operator. If the argument is
-a primitive, and if it fails the identical comparison, Mockery does a fallback
-to the ``==`` (equals) comparison operator.
+これはMockeryに対し、引数に``1``を渡された``foo``メソッドの呼び出しを受け取ることを伝えています。このようなケースでは、Mockeryはまず引数の比較に``===``（厳密な比較）演算子を使用します。引数がプリミティブで、厳密な比較で不一致の場合、Mockeryは``==``（緩やかな比較）演算子をフォールバックとして使用します。
 
-When matching objects as arguments, Mockery only does the strict ``===``
-comparison, which means only the same ``$object`` will match:
+オブジェクトの引数のマッチングでは、Mockeryは厳密な``===``比較だけを行いますので、全く同じ``$object``のみ一致します。
 
 .. code-block:: php
 
@@ -57,26 +33,22 @@ comparison, which means only the same ``$object`` will match:
     $mock->shouldReceive("foo")
         ->with($object);
 
-    // Hamcrest equivalent
+    // Hamcrestの同じ動作をするマッチャー
     $mock->shouldReceive("foo")
         ->with(identicalTo($object));
 
-A different instance of ``stdClass`` will **not** match.
+別の``stdClass``インスタンスは、一致 **しません** 。
 
-.. note::
+    {note} ``Mockery\Matcher\MustBe``マッチャーは使用されなくなりました。
 
-    The ``Mockery\Matcher\MustBe`` matcher has been deprecated.
-
-If we need a loose comparison of objects, we can do that using Hamcrest's
-``equalTo`` matcher:
+オブジェクトに対してゆるい比較が必要であれば、Hamcrestの``equalTo``マッチャーを使用します。
 
 .. code-block:: php
 
     $mock->shouldReceive("foo")
         ->with(equalTo(new stdClass));
 
-In cases when we don't care about the type, or the value of an argument, just
-that any argument is present, we use ``any()``:
+引数のタイプや値は気にかけず、どんな引数でも構わない場合、``any()``を使用します。
 
 .. code-block:: php
 
@@ -84,19 +56,18 @@ that any argument is present, we use ``any()``:
     $mock->shouldReceive("foo")
         ->with(\Mockery::any());
 
-    // Hamcrest equivalent
+    // Hamcrestの同じ動作をするマッチャー
     $mock->shouldReceive("foo")
         ->with(anything())
 
-Anything and everything passed in this argument slot is passed unconstrained.
+この引数の場所にはどんなものでも全て渡せ、制約はありません。
 
-Validating Types and Resources
-------------------------------
+タイプとリソースのバリデーション
+----------------------------
 
-The ``type()`` matcher accepts any string which can be attached to ``is_`` to
-form a valid type check.
+``type()``マッチャーは文字列を引数に取り、 タイプチェックを検査する``is_``形式の関数でマッチングします。
 
-To match any PHP resource, we could do the following:
+PHPリソースであるかをマッチングするには、以下のように行なえます。
 
 .. code-block:: php
 
@@ -104,34 +75,22 @@ To match any PHP resource, we could do the following:
     $mock->shouldReceive("foo")
         ->with(\Mockery::type('resource'));
 
-    // Hamcrest equivalents
+    // Hamcrestの同じ動作をするマッチャー
     $mock->shouldReceive("foo")
         ->with(resourceValue());
     $mock->shouldReceive("foo")
         ->with(typeOf('resource'));
 
-It will return a ``true`` from an ``is_resource()`` call, if the provided
-argument to the method is a PHP resource. For example, ``\Mockery::type('float')``
-or Hamcrest's ``floatValue()`` and ``typeOf('float')`` checks use ``is_float()``,
-and ``\Mockery::type('callable')`` or Hamcrest's ``callable()`` uses
-``is_callable()``.
+メソッドに指定した引数がPHPのリソースの場合、``is_resource()``を呼び出し、``true``が返ってきます。たとえば、``\Mockery::type('float')``やHamcrestの``floatValue()``、``typeOf('float')``チェックでは、``is_float()``が使用され、``\Mockery::type('callable')``やHamcrest``callable()``では、``is_callable()``を使用します。
 
-The ``type()`` matcher also accepts a class or interface name to be used in an
-``instanceof`` evaluation of the actual argument. Hamcrest uses ``anInstanceOf()``.
+``type()``マッチャーは、クラスやインターフェイス名も引数に取り、実際の引数を``instanceof``で評価するために使用します。Hamcrestでは、``anInstanceOf()``を使います。
 
-A full list of the type checkers is available at
-`php.net <http://www.php.net/manual/en/ref.var.php>`_ or browse Hamcrest's function
-list in
-`the Hamcrest code <https://github.com/hamcrest/hamcrest-php/blob/master/hamcrest/Hamcrest.php>`_.
+タイプチェッカーの全リストは、`php.net <http://www.php.net/manual/ja/ref.var.php>`_を参照するか、Hamcrestの関数リスト、`the Hamcrest code <https://github.com/hamcrest/hamcrest-php/blob/master/hamcrest/Hamcrest.php>`_を閲覧してください。
 
-.. _argument-validation-complex-argument-validation:
+複雑な引数のバリデーション
+----------------------
 
-Complex Argument Validation
----------------------------
-
-If we want to perform a complex argument validation, the ``on()`` matcher is
-invaluable. It accepts a closure (anonymous function) to which the actual
-argument will be passed.
+複雑な引数のバリデーションを行いたい場合は、``on()``マッチャーがとても役立ちます。これは実際の引数が渡されるクロージャー（無名関数）を引数に取ります。
 
 .. code-block:: php
 
@@ -139,8 +98,7 @@ argument will be passed.
     $mock->shouldReceive("foo")
         ->with(\Mockery::on(closure));
 
-If the closure evaluates to (i.e. returns) boolean ``true`` then the argument is
-assumed to have matched the expectation.
+クロージャーの評価（例えば返却値）が、論理型の``true``であれば、その引数はエクスペクションと一致すると判断されます。
 
 .. code-block:: php
 
@@ -154,17 +112,14 @@ assumed to have matched the expectation.
             return false;
         }));
 
-    $mock->foo(4); // matches the expectation
-    $mock->foo(3); // throws a NoMatchingExpectationException
+    $mock->foo(4); // エクスペクションと一致
+    $mock->foo(3); // NoMatchingExpectationExceptionを投げる
 
-.. note::
+|nbsp|
 
-    There is no Hamcrest version of the ``on()`` matcher.
+    {note} ``on()``にあたる、Hamcrestバージョンのマッチャーは存在しません。
 
-We can also perform argument validation by passing a closure to ``withArgs()``
-method. The closure will receive all arguments passed in the call to the expected
-method and if it evaluates (i.e. returns) to boolean ``true``, then the list of
-arguments is assumed to have matched the expectation:
+渡されたクロージャーで、引数のバリデーションを実行する``withArgs()``メソッドも使用できます。クロージャーは期待されているメソッドに渡された全引数を受け取り、その評価（例えば返却値）が論理型の``true``の場合、引数のリストはエクスペクションと一致したと判断します。
 
 .. code-block:: php
 
@@ -172,9 +127,7 @@ arguments is assumed to have matched the expectation:
     $mock->shouldReceive("foo")
         ->withArgs(closure);
 
-The closure can also handle optional parameters, so if an optional parameter is
-missing in the call to the expected method, it doesn't necessary means that the
-list of arguments doesn't match the expectation.
+クロージャーはオプショナルな引数も処理でき、期待しているメソッド呼び出しでオプショナルな引数が指定されない場合でも、引数のリストがエクスペクションと一致しないと判定されるのを防ぐことができます。
 
 .. code-block:: php
 
@@ -189,20 +142,15 @@ list of arguments doesn't match the expectation.
     $mock = \Mockery::mock('MyClass');
     $mock->shouldReceive('foo')->withArgs($closure);
 
-    $mock->foo(1, 2); // It matches the expectation: the optional argument is not needed
-    $mock->foo(1, 2, 3); // It also matches the expectation: the optional argument pass the validation
-    $mock->foo(1, 2, 4); // It doesn't match the expectation: the optional doesn't pass the validation
+    $mock->foo(1, 2); // オプショナル引数は必須ではない、エクスペクションと一致する
+    $mock->foo(1, 2, 3); // オプショナル引数はバリデーションに成功、エクスペクションと一致する
+    $mock->foo(1, 2, 4); // オプショナル引数がバリデーションに失敗、エクスペクションと一致しない
 
-.. note::
+|nbsp|
 
-    In previous versions, Mockery's ``with()`` would attempt to do a pattern
-    matching against the arguments, attempting to use the argument as a
-    regular expression. Over time this proved to be not such a great idea, so
-    we removed this functionality, and have introduced ``Mockery::pattern()``
-    instead.
+    {note} 以前のバージョンのMockeryで、``with()``は引数に対するパターンマッチングを試みました。引数は正規表現だと仮定していました。これは何度も素晴らしいアイデアではないと証明されたため、この機能は削除し、代わりに``Mockery::pattern()``を導入しました。
 
-If we would like to match an argument against a regular expression, we can use
-the ``\Mockery::pattern()``:
+引数が正規表現と一致するかを調べたい場合は、``\Mockery::pattern()``を使います。
 
 .. code-block:: php
 
@@ -210,11 +158,11 @@ the ``\Mockery::pattern()``:
     $mock->shouldReceive('foo')
         ->with(\Mockery::pattern('/^foo/'));
 
-    // Hamcrest equivalent
+    // Hamcrestの同じ動作をするマッチャー
     $mock->shouldReceive('foo')
         with(matchesPattern('/^foo/'));
 
-The ``ducktype()`` matcher is an alternative to matching by class type:
+``ducktype()``マッチャーは、クラスタイプのマッチングの別型です。
 
 .. code-block:: php
 
@@ -222,18 +170,15 @@ The ``ducktype()`` matcher is an alternative to matching by class type:
     $mock->shouldReceive('foo')
         ->with(\Mockery::ducktype('foo', 'bar'));
 
-It matches any argument which is an object containing the provided list of
-methods to call.
+呼び出すリスト上のメソッドを含んでいるオブジェクトと一致します。
 
-.. note::
 
-    There is no Hamcrest version of the ``ducktype()`` matcher.
+    {note} Hamcrestバージョンには、``ducktype()``に当たるマッチャーは存在しません。
 
-Additional Argument Matchers
-----------------------------
+追加の引数マッチャー
+------------------
 
-The ``not()`` matcher matches any argument which is not equal or identical to
-the matcher's parameter:
+``not()``マッチャーは、引数と等しくない、もしくは異なる引数であればマッチします。
 
 .. code-block:: php
 
@@ -241,11 +186,11 @@ the matcher's parameter:
     $mock->shouldReceive('foo')
         ->with(\Mockery::not(2));
 
-    // Hamcrest equivalent
+    // Hamcrestの同じ動作をするマッチャー
     $mock->shouldReceive('foo')
         ->with(not(2));
 
-``anyOf()`` matches any argument which equals any one of the given parameters:
+``anyOf()``マッチャーは、指定した引数のどれかと一致する場合にマッチします。
 
 .. code-block:: php
 
@@ -253,12 +198,11 @@ the matcher's parameter:
     $mock->shouldReceive('foo')
         ->with(\Mockery::anyOf(1, 2));
 
-    // Hamcrest equivalent
+    // Hamcrestの同じ動作をするマッチャー
     $mock->shouldReceive('foo')
         ->with(anyOf(1,2));
 
-``notAnyOf()`` matches any argument which is not equal or identical to any of
-the given parameters:
+``notAnyOf()``マッチャーは、指定した引数のどれとも一致しない、もしくは同じでない場合にマッチします。
 
 .. code-block:: php
 
@@ -266,12 +210,11 @@ the given parameters:
     $mock->shouldReceive('foo')
         ->with(\Mockery::notAnyOf(1, 2));
 
-.. note::
+|nbsp|
 
-    There is no Hamcrest version of the ``notAnyOf()`` matcher.
+    {note} Hamcrestバージョンの``notAnyOf()``マッチャーはありません。
 
-``subset()`` matches any argument which is any array containing the given array
-subset:
+``subset()``は指定した配列のサブセットを含んでいる、引数の配列と一致します。
 
 .. code-block:: php
 
@@ -279,16 +222,11 @@ subset:
     $mock->shouldReceive('foo')
         ->with(\Mockery::subset(array(0 => 'foo')));
 
-This enforces both key naming and values, i.e. both the key and value of each
-actual element is compared.
+これは、キーと値の両方の一致を強要します。例えば、実際の引数で各要素のキーと値を比較します。
 
-.. note::
+    {note} この機能はHamcrestバージョンがありません。しかし、Hamcrestでは``hasEntry()``か``hasKeyValuePair()``で、一つの要素をチェックできます。
 
-    There is no Hamcrest version of this functionality, though Hamcrest can check
-    a single entry using ``hasEntry()`` or ``hasKeyValuePair()``.
-
-``contains()`` matches any argument which is an array containing the listed
-values:
+``contains()``マッチャーはリストした値を含んでいる配列と一致します。
 
 .. code-block:: php
 
@@ -296,10 +234,9 @@ values:
     $mock->shouldReceive('foo')
         ->with(\Mockery::contains(value1, value2));
 
-The naming of keys is ignored.
+キーは無視されます。
 
-``hasKey()`` matches any argument which is an array containing the given key
-name:
+``hasKey()``マッチャーは、指定したキー値を含んでいる配列と一致します。
 
 .. code-block:: php
 
@@ -307,11 +244,12 @@ name:
     $mock->shouldReceive('foo')
         ->with(\Mockery::hasKey(key));
 
-``hasValue()`` matches any argument which is an array containing the given
-value:
+``hasValue()``マッチャーは、指定した値を含んでいる配列と一致します。
 
 .. code-block:: php
 
     $mock = \Mockery::mock('MyClass');
     $mock->shouldReceive('foo')
         ->with(\Mockery::hasValue(value));
+
+.. |nbsp| unicode:: 0xA0 .. non breaking space

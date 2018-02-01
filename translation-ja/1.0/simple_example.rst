@@ -1,14 +1,10 @@
 .. index::
-    single: Getting Started; Simple Example
+    single: シンプルな例
 
-Simple Example
+シンプルな例
 ==============
 
-Imagine we have a ``Temperature`` class which samples the temperature of a
-locale before reporting an average temperature. The data could come from a web
-service or any other data source, but we do not have such a class at present.
-We can, however, assume some basic interactions with such a class based on its
-interaction with the ``Temperature`` class:
+平均気温をレポートするために、ある地方の気温を測定する``Temperature``クラスがあるとイメージしてください。そのデーターはWebサービスから取得しても、他の情報源から取得してもかまいません。ですが現在手元にありません。しかし``Temperature``クラスとのやり取りに基づき、それらのクラスの基本的なやり取りを仮定することはできます。
 
 .. code-block:: php
 
@@ -31,10 +27,7 @@ interaction with the ``Temperature`` class:
         }
     }
 
-Even without an actual service class, we can see how we expect it to operate.
-When writing a test for the ``Temperature`` class, we can now substitute a
-mock object for the real service which allows us to test the behaviour of the
-``Temperature`` class without actually needing a concrete service instance.
+実際のサービスクラスが無くても、どのような操作が行われることが期待されるか理解できます。``Temperature``クラスに対するテストを書くには、実際に必要な具象サービスのインスタンスが存在しなくても、振る舞いをテストするため今のところは、本物のサービスをモックオブジェクトで置き換えておくことは可能です。
 
 .. code-block:: php
 
@@ -60,11 +53,6 @@ mock object for the real service which allows us to test the behaviour of the
         }
     }
 
-We create a mock object which our ``Temperature`` class will use and set some
-expectations for that mock — that it should receive three calls to the ``readTemp``
-method, and these calls will return 10, 12, and 14 as results.
+``Temperature``クラスのモックオブジェクトを作成し、これを用いて``readTemp``メソッドを３回呼び出し、結果として10、12、14を返すというエクスペクション（期待）を設定しました。
 
-.. note::
-
-    PHPUnit integration can remove the need for a ``tearDown()`` method. See
-    ":doc:`/reference/phpunit_integration`" for more information.
+  {note} PHPUnitの統合により、``tearDown()``メソッドが必要なくなります。「`PHPUnit統合 <phpunit_integration>`_」で詳細を確認してください。

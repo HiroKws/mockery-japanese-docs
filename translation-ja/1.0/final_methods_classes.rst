@@ -22,5 +22,5 @@ mock into ``\Mockery::mock()``, i.e. Mockery will then generate a Proxy to the
 real object and selectively intercept method calls for the purposes of setting
 and meeting expectations.
 
-See the :ref:`creating-test-doubles-partial-test-doubles` chapter, the subsection
+See the `パーシャルテストダブル<creating_test_doubles.htm#パーシャルテストダブル>`_ chapter, the subsection
 about proxied partial test doubles.

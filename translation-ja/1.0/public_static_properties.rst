@@ -11,5 +11,5 @@ in the system under test. These aliases block that loading (unless via a
 require statement - so please use autoloading!) and allow Mockery to intercept
 static method calls and add expectations for them.
 
-See the :ref:`creating-test-doubles-aliasing` section for more information on
+See the `テストダブルの生成のエイリアス<creating_test_doubles.html#エイリアス>`_ section for more information on
 creating aliased mocks, for the purpose of mocking public static methods.

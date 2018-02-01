@@ -1,45 +1,29 @@
 Mockery
 =======
 
-Mockery is a simple yet flexible PHP mock object framework for use in unit
-testing with PHPUnit, PHPSpec or any other testing framework. Its core goal is
-to offer a test double framework with a succinct API capable of clearly
-defining all possible object operations and interactions using a human
-readable Domain Specific Language (DSL). Designed as a drop in alternative to
-PHPUnit's phpunit-mock-objects library, Mockery is easy to integrate with
-PHPUnit and can operate alongside phpunit-mock-objects without the World
-ending.
+Mockeryはシンプルながら柔軟な、PHPモックオブジェクトフレームワークです。PHPUnitやPHPSpecなどのテストフレームワークと一緒にユニットテストで使用します。主なゴールは、可能性のある全てのオブジェクト操作を明確に定義できる簡潔なAPIと、人間が読み取れるDSL(Domain Specific Language)を使用した統合を提供することです。PHPUnitのphpunit-mock-objectsライブラリーの簡単に利用できる代替として設計しました。MockeryはPHPUnitと簡単に統合でき、難しさに絶望しなくともphpunit-mock-objectsと一緒に操作可能です。
 
-Mock Objects
+モックオブジェクト
 ------------
 
-In unit tests, mock objects simulate the behaviour of real objects. They are
-commonly utilised to offer test isolation, to stand in for objects which do
-not yet exist, or to allow for the exploratory design of class APIs without
-requiring actual implementation up front.
+モックオブジェクトはユニットテストで、実際のオブジェクトの振る舞いをシミュレートするものです。一般にテストの独立性を保つために使用され、まだ存在していないオブジェクトの代わりをさせたり、実装することなくクラスAPIの設計を探求したりするために使用します。
 
-The benefits of a mock object framework are to allow for the flexible
-generation of such mock objects (and stubs). They allow the setting of
-expected method calls and return values using a flexible API which is capable
-of capturing every possible real object behaviour in way that is stated as
-close as possible to a natural language description.
+モックオブジェクトフレームワークの利点は、このようなモック（とスタブ）を柔軟に生成可能なことです。自然言語での説明にできるだけ近い方法で、実際のオブジェクトの振る舞い全ての可能性を捉えられる柔軟なAPIを使用し、期待するメソッドの呼び出しや、返される値を定義できます。
 
-Getting Started
+利用開始
 ---------------
 
-Ready to dive into the Mockery framework? Then you can get started by reading
-the "Getting Started" section!
+Mockeryフレームワークへ飛び込む準備はできましたか？それでは、「利用開始」セクションを読めば、初められますよ。
 
 * `インストール <installation.html>`_
 * `アップグレード <upgrading.html>`_
 * `シンプルな例 <simple_example.html>`_
 * `クイックリファレンス <quick_reference.html>`_
 
-Reference
+リファレンス
 ---------
 
-The reference contains a complete overview of all features of the Mockery
-framework.
+リファレンスセクションでは、Mockeryフレームワーク全機能の完全な概念を紹介します。
 
 * `テストダブル作成 <creating_test_doubles.html>`_
 * `エクスペクション <expectations.html>`_
@@ -50,7 +34,7 @@ framework.
 * `Protectedメソッド <protected_methods.html>`_
 * `Publicプロパティ <public_properties.html>`_
 * `Public静的プロパティ <public_static_properties.html>`_
-* `参照動作により渡す <pass_by_reference_behaviours.html>`_
+* `参照渡しの引数 <pass_by_reference_behaviours.html>`_
 * `デメテルチェーン <demeter_chains.html>`_
 * `Finalメソッドクラス <final_methods_classes.html>`_
 * `Magicメソッド <magic_methods.html>`_
@@ -59,17 +43,17 @@ framework.
 Mockery
 -------
 
-Learn about Mockery's configuration, reserved method names, exceptions...
+Mockeryの設定、予約メソッド名、例外などを学びましょう。
 
 * `設定 <configuration.html>`_
 * `例外 <exceptions.html>`_
 * `予約メソッド名 <reserved_method_names.html>`_
-* `Gotchas <gotchas.html>`_
+* `注意点 <gotchas.html>`_
 
-Cookbook
+クックブック
 --------
 
-Want to learn some easy tips and tricks? Take a look at the cookbook articles!
+簡単なヒントやトリックを学びたいのですか？クックブックのページをご覧ください。
 
 * `既定エクスペクション <default_expectations.html>`_
 * `モックオブジェクト判定 <detecting_mock_objects.html>`_
