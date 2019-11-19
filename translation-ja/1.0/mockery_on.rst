@@ -1,22 +1,14 @@
 .. index::
-    single: Cookbook; Complex Argument Matching With Mockery::on
+    single: Cookbook; 複雑な引数マッチング(on)
 
-Complex Argument Matching With Mockery::on
-==========================================
+複雑な引数マッチング(on)
+=====================
 
-When we need to do a more complex argument matching for an expected method call,
-the ``\Mockery::on()`` matcher comes in really handy. It accepts a closure as an
-argument and that closure in turn receives the argument passed in to the method,
-when called. If the closure returns ``true``, Mockery will consider that the
-argument has passed the expectation. If the closure returns ``false``, or a
-"falsey" value, the expectation will not pass.
+メソッド呼び出しで期待される引数のマッチングを複雑にする必要がある場合は、``\Mockery::on()``マッチャーを使うととても簡単です。引数としてクロージャーを受け付け、そのクロージャーへメソッド呼び出し時の引数が渡されます。クロージャーから``true``を返すと、Mockeryは引数がエクスペクションに一致したと取り扱い、「失敗した」値の場合は合致しなかったと考えます。
 
-The ``\Mockery::on()`` matcher can be used in various scenarios — validating
-an array argument based on multiple keys and values, complex string matching...
+``\Mockery::on()``マッチャーは多くのシナリオで使用できます。複数のキー／値に基づいた配列の引数や、複雑な文字列のマッチングなどです。
 
-Say, for example, we have the following code. It doesn't do much; publishes a
-post by setting the ``published`` flag in the database to ``1`` and sets the
-``published_at`` to the current date and time:
+たとえば、次のようなコードです。これは、さほど複雑ではありませんが、データベース上の``published``フラッグを``1``にセットすることで、あるポストを公開済みにし、``published_at``へ現日時をセットします。
 
 .. code-block:: php
 
@@ -40,8 +32,7 @@ post by setting the ``published`` flag in the database to ``1`` and sets the
         }
     }
 
-In a test we would mock the model and set some expectations on the call of the
-``save()`` method:
+テストでモデルをモックし、``save()``メソッドにエクスペクションを指定してみましょう。
 
 .. code-block:: php
 
@@ -64,22 +55,13 @@ In a test we would mock the model and set some expectations on the call of the
 
     \Mockery::close();
 
-The important part of the example is inside the closure we pass to the
-``\Mockery::on()`` matcher. The ``$argument`` is actually the ``$saveData`` argument
-the ``save()`` method gets when it is called. We check for a couple of things in
-this argument:
+この例で重要なのは、``\Mockery::on()``マッチャーへ渡したクロージャーの内容です。
+``$argument``は実際には、``save()``メソッドが呼び出されたときの引数である、``$saveData``です。この引数について、いくつかのことをチェックしています。
 
-* the post ID is set, and is same as the post ID we passed in to the
-  ``publishPost()`` method,
-* the ``published`` flag is set, and is ``1``, and
-* the ``published_at`` key is present.
+* ポストIDがセットされており、``publishPost()``メソッドへ渡したポストIDと一致していること
+* ``published``がセットされており、``1``であること
+* ``published_at``キーが存在していること
 
-If any of these requirements is not satisfied, the closure will return ``false``,
-the method call expectation will not be met, and Mockery will throw a
-``NoMatchingExpectationException``.
+どれかの要件を満たさない場合、クロージャーは``false``を返し、メソッド呼び出しのエクスペクションは一致せず、Mockeryは``NoMatchingExpectationException``を投げます。
 
-.. note::
-
-    This cookbook entry is an adaption of the blog post titled
-    `"Complex argument matching in Mockery" <https://robertbasic.com/blog/complex-argument-matching-in-mockery/>`_,
-    published by Robert Basic on his blog.
+    {note} このクックブックのエントリーは、Robertによるブログ記事である、`"Complex argument matching in Mockery" <https://robertbasic.com/blog/complex-argument-matching-in-mockery/>`_を元に引用したものです。

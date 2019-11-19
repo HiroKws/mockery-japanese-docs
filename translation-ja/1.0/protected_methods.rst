@@ -1,15 +1,12 @@
 .. index::
-    single: Mocking; Protected Methods
+    single: Mocking; protectedメソッド
 
-Mocking Protected Methods
-=========================
+protectedメソッドのモック
+======================
 
-By default, Mockery does not allow mocking protected methods. We do not recommend
-mocking protected methods, but there are cases when there is no other solution.
+デフォルトでは、Mockeryはprotectedメソッドのモックを行えません。protectedメソッドのモックは推奨していませんが、他に手段がない場合があります。
 
-For those cases we have the ``shouldAllowMockingProtectedMethods()`` method. It
-instructs Mockery to specifically allow mocking of protected methods, for that
-one class only:
+そうしたケースのため、``shouldAllowMockingProtectedMethods()``メソッドがあります。これはMockeryへそのクラスだけprotectedメソッドのモックを特別に許すように指示します。
 
 .. code-block:: php
 

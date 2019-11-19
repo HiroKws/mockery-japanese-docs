@@ -1,16 +1,9 @@
 .. index::
-    single: Mocking; Magic Methods
+    single: Mocking; マジックメソッド
 
-PHP Magic Methods
+PHPマジックメソッド
 =================
 
-PHP magic methods which are prefixed with a double underscore, e.g.
-``__set()``, pose a particular problem in mocking and unit testing in general.
-It is strongly recommended that unit tests and mock objects do not directly
-refer to magic methods. Instead, refer only to the virtual methods and
-properties these magic methods simulate.
+PHPマジックメソッドは、``__set()``のように二重の下線で始まり、一般的にモックやユニットテストで特定の問題を引き起こします。ユニットテストとモックオブジェクトでは、マジックメソッドを直接参照しないことをおすすめします。代わりに、マジックメソッドをシミュレートする仮想メソッドと仮想プロパティだけを参照してください。
 
-Following this piece of advice will ensure we are testing the real API of
-classes and also ensures there is no conflict should Mockery override these
-magic methods, which it will inevitably do in order to support its role in
-intercepting method calls and properties.
+この小さなアドバイスに従えば、クラスの本当のAPIを確実にテストすることになりますし、メソッドコールやプロパティーをインターセプトする役割をサポートする目的のために、Mockeryが必然的に行うマジックメソッドのオーバーライドでコンフリクトが起きるのを確実に防げます。

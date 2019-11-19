@@ -1,12 +1,10 @@
 .. index::
-    single: Cookbook; Big Parent Class
+    single: Cookbook; 大きな親クラス
 
-Big Parent Class
+大きな親クラス
 ================
 
-In some application code, especially older legacy code, we can come across some
-classes that extend a "big parent class" - a parent class that knows and does
-too much:
+あるアプリケーションのコード、特に古いレガシーなコードで、「大きな親クラス」を拡張しているクラスに出会うことがあります。親クラスは知りすぎており、多くをやりすぎています。
 
 .. code-block:: php
 
@@ -14,8 +12,8 @@ too much:
     {
         public function doesEverything()
         {
-            // sets up database connections
-            // writes to log files
+            // データベース接続のセットアップ
+            // ログファイルの書き込み
         }
     }
 
@@ -23,22 +21,16 @@ too much:
     {
         public function doesOneThing()
         {
-            // but calls on BigParentClass methods
+            // BigParentClassメソッドを呼び出すしかない
             $result = $this->doesEverything();
-            // does something with $result
+            // 何かが行われ、結果は$result
             return $result;
         }
     }
 
-We want to test our ``ChildClass`` and its ``doesOneThing`` method, but the
-problem is that it calls on ``BigParentClass::doesEverything()``. One way to
-handle this would be to mock out **all** of the dependencies ``BigParentClass``
-has and needs, and then finally actually test our ``doesOneThing`` method. It's
-an awful lot of work to do that.
+``ChildClass``と``doesOneThing``メソッドをテストしたいわけですが、問題は``BigParentClass::doesEverything()``を呼び出していることです。これを処理す一つの方法は、依存している``BigParentClass``が持ち、必要としている **すべて** をモックし尽くして、それから``doesOneThing``メソッドを実際にテストすることです。これを行うのは、やたらに作業が大きくなります。
 
-What we can do, is to do something... unconventional. We can create a runtime
-partial test double of the ``ChildClass`` itself and mock only the parent's
-``doesEverything()`` method:
+何かできること、それは何か…型破りなことをしましょう。``ChildClass``自身のランタイムパーシャルテストダブルを生成し、親の``doesEverything()``メソッドのみをモックします。
 
 .. code-block:: php
 
@@ -48,5 +40,4 @@ partial test double of the ``ChildClass`` itself and mock only the parent's
 
     $childClass->doesOneThing(); // string("some result from parent");
 
-With this approach we mock out only the ``doesEverything()`` method, and all the
-unmocked methods are called on the actual ``ChildClass`` instance.
+このアプローチで、``doesEverything()``メソッドのみをモックでき、モックしないメソッドの呼び出しは、すべて実際の``ChildClass``インスタンスに対し行われます。

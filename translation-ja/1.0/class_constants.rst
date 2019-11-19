@@ -1,25 +1,18 @@
 .. index::
-    single: Cookbook; Class Constants
+    single: Cookbook; クラス定数
 
-Class Constants
-===============
+クラス定数
+========
 
-When creating a test double for a class, Mockery does not create stubs out of
-any class constants defined in the class we are mocking. Sometimes though, the
-non-existence of these class constants, setup of the test, and the application
-code itself, it can lead to undesired behavior, and even a PHP error:
-``PHP Fatal error:  Uncaught Error: Undefined class constant 'FOO' in ...```
+クラスのテストダブルを生成するとき、Mockeryはモックするクラスの定数定義をスタブしません。そのため時々、クラス定数が存在しないため、テストのセットアップやアプリケーションのコード自身で望んでいない振る舞いを引き起こす可能性があります。``PHP Fatal error:  Uncaught Error: Undefined class constant 'FOO' in ...``のPHPエラーさえ起きる可能性があります。
 
-While supporting class constants in Mockery would be possible, it does require
-an awful lot of work, for a small number of use cases.
+Mockeryでクラス定数をサポートするのは可能ですが、非常に多くの作業が必要なのに対し、使用されるケースはまれです。
 
-We can, however, deal with these constants in a way supported by Mockery - by
-using `名前付きモック<creating_test_doubles.html#名前付きモック>`_
+それでも、Mockeryで現在サポートされている方法の、`名前付きモック<creating_test_doubles.html#名前付きモック>`_により、定数を取り扱うことはできます。
 
-A named mock is a test double that has a name of the class we want to mock, but
-under it is a stubbed out class that mimics the real class with canned responses.
+名前付きモックはモックしたいクラス名を持つテストダブルですか、固定のレスポンスを含めた代理クラスを本当のクラスの代わりに裏でモックします。
 
-Lets look at the following made up, but not impossible scenario:
+次に、仮想ですが起こり得るシナリオをご覧ください。
 
 .. code-block:: php
 
@@ -30,7 +23,7 @@ Lets look at the following made up, but not impossible scenario:
 
         public static function fetch()
         {
-            // Fetcher gets something for us from somewhere...
+            // Fetcherは何かをどこかから私達のために取得する…
             return self::SUCCESS;
         }
     }
@@ -49,17 +42,13 @@ Lets look at the following made up, but not impossible scenario:
         }
     }
 
-Our ``MyClass`` calls a ``Fetcher`` that fetches some resource from somewhere -
-maybe it downloads a file from a remote web service. Our ``MyClass`` prints out
-a response message depending on the response from the ``Fetcher::fetch()`` call.
+``MyClass``は、どこかにある、何かのリソース、たぶんリモートのWebサービスからファイルをダウンロードする``Fetcher``を呼び出します。``MyClass``は``Fetcher::fetch()``の呼び出しのレスポンスに基づいてメッセージを出力します。
 
-When testing ``MyClass`` we don't really want ``Fetcher`` to go and download
-random stuff from the internet every time we run our test suite. So we mock it
-out:
+``MyClass``をテストする場合、テストスーツを実行するたびに、インターネットから何かがダウンロードされる``Fetcher``を動かすのは、本当に好ましくありません。 ですから、モックしましょう。
 
 .. code-block:: php
 
-    // Using alias: because fetch is called statically!
+    // fetchは静的呼び出しなため、alias:を使う
     \Mockery::mock('alias:Fetcher')
         ->shouldReceive('fetch')
         ->andReturn(0);
@@ -67,14 +56,11 @@ out:
     $myClass = new MyClass();
     $myClass->doFetching();
 
-If we run this, our test will error out with a nasty
-``PHP Fatal error:  Uncaught Error: Undefined class constant 'SUCCESS' in ..``.
+これを実行すると、残念ながらテストは次のエラーになります。``PHP Fatal error:  Uncaught Error: Undefined class constant 'SUCCESS' in ..``
 
-Here's how a ``namedMock()`` can help us in a situation like this.
+この状況で、``namedMock()``が役立てられます。
 
-We create a stub for the ``Fetcher`` class, stubbing out the class constants,
-and then use ``namedMock()`` to create a mock named ``Fetcher`` based on our
-stub:
+``Fetcher``クラスのスタブを組んで、クラス定数をスタブします。それから``namedMock()``を使用し、作成したスタブを元に``Fetcher``という名前のモックを生成します。（訳注：実際にはmockメソッドの引数で指定しており、メソッドは呼び出されていません。）
 
 .. code-block:: php
 
@@ -91,11 +77,9 @@ stub:
     $myClass = new MyClass();
     $myClass->doFetching();
 
-This works because under the hood, Mockery creates a class called ``Fetcher``
-that extends ``FetcherStub``.
+Mockeryは``FetcherStub``を拡張し、``Fetcher``という名前のクラスを生成するため、これはうまく行きます。
 
-The same approach will work even if ``Fetcher::fetch()`` is not a static
-dependency:
+``Fetcher::fetch()``が静的メソッドない場合でも、同じアプローチが取れます。
 
 .. code-block:: php
 
@@ -106,7 +90,7 @@ dependency:
 
         public function fetch()
         {
-            // Fetcher gets something for us from somewhere...
+            // Fetcherは何かをどこかから私達のために取得する…
             return self::SUCCESS;
         }
     }
@@ -125,7 +109,7 @@ dependency:
         }
     }
 
-And the test will have something like this:
+テストは、次のようになります。
 
 .. code-block:: php
 

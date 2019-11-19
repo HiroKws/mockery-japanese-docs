@@ -1,38 +1,24 @@
 .. index::
-    single: Mocking; Demeter Chains
+    single: Mocking; デメテルチェーン
 
-Mocking Demeter Chains And Fluent Interfaces
-============================================
+デメテルチェーンとfluentインターフェイスのモック
+========================================
 
-Both of these terms refer to the growing practice of invoking statements
-similar to:
+両語ともに以下のような形態の、よく使われるようになってきたメソッド起動の実働コードを意味します。
 
 .. code-block:: php
 
     $object->foo()->bar()->zebra()->alpha()->selfDestruct();
 
-The long chain of method calls isn't necessarily a bad thing, assuming they
-each link back to a local object the calling class knows. As a fun example,
-Mockery's long chains (after the first ``shouldReceive()`` method) all call to
-the same instance of ``\Mockery\Expectation``. However, sometimes this is not
-the case and the chain is constantly crossing object boundaries.
+呼び出し側のクラスが知っているローカルオブジェクトへ、それぞれのリンクが戻っていると仮定すれば、メソッド呼び出しの長いチェーンは悪いとは言い切れません。面白い一例は、（最初の``shouldReceive()``メソッドに続く）Mockeryの長いチェーンは、すべて同じ``\Mockery\Expectation``インスタンスを呼び出しています。しかしながら、時々これが当てはまらずに、チェーンがオブジェクトの境界をまたぐことがあります。
 
-In either case, mocking such a chain can be a horrible task. To make it easier
-Mockery supports demeter chain mocking. Essentially, we shortcut through the
-chain and return a defined value from the final call. For example, let's
-assume ``selfDestruct()`` returns the string "Ten!" to $object (an instance of
-``CaptainsConsole``). Here's how we could mock it.
+どちらの場合でも、このようなチェーンをモックするのはひどい仕事になり得ます。簡単にするために、Mockeryはデメテルチェーンのモックをサポートしています。簡潔に言えば、チェーン全体のショートカット記法と、最後の呼び出しの戻り値の定義です。例として、``selfDestruct()``メソッドが、文字列の"Ten!"を（``CaptainsConsole``のインスタンスの）オブジェクトへ返すと仮定してみましょう。これをモックする例をご覧ください。
 
 .. code-block:: php
 
     $mock = \Mockery::mock('CaptainsConsole');
     $mock->shouldReceive('foo->bar->zebra->alpha->selfDestruct')->andReturn('Ten!');
 
-The above expectation can follow any previously seen format or expectation,
-except that the method name is simply the string of all expected chain calls
-separated by ``->``. Mockery will automatically setup the chain of expected
-calls with its final return values, regardless of whatever intermediary object
-might be used in the real implementation.
+上記のエクスペクションは、前記のチェーンの形式に従っています。例外はチェーンで呼び出される全てのメソッド名が、``->``で分割されたシンプルな文字列になっていることです。実際の実装がチェーン間でどんなオブジェクトを使用しているかに関係なく、Mockeryは自動的に、チェーン呼び出しの期待と、最終的な戻り地を設定します。
 
-Arguments to all members of the chain (except the final call) are ignored in
-this process.
+この過程で、チェーンの全ての要素の引数は（最後の呼び出しを除き）、無視されます。

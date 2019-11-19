@@ -1,12 +1,10 @@
 .. index::
-    single: Cookbook; Detecting Mock Objects
+    single: Cookbook; モックオブジェクトの判定
 
-Detecting Mock Objects
+モックオブジェクトの判定
 ======================
 
-Users may find it useful to check whether a given object is a real object or a
-simulated Mock Object. All Mockery mocks implement the
-``\Mockery\MockInterface`` interface which can be used in a type check.
+与えられたオブジェクトが本当のオブジェクトなのか、それともそれをシミュレートするモックオブジェクトなのかをチェックできると便利です。Mockeryの全オブジェクトは ``\Mockery\MockInterface``インターフェイスを実装しており、タイプチェックに利用できます。
 
 .. code-block:: php
 

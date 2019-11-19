@@ -60,5 +60,5 @@ Mockeryの設定、予約メソッド名、例外などを学びましょう。
 * `コンストラクタ非実行 <not_calling_the_constructor.html>`_
 * `強い依存のモック <mocking_hard_dependencies.html>`_
 * `クラス定数 <class_constants.html>`_
-* `大きなParentクラス <big_parent_class.html>`_
+* `大きな親クラス <big_parent_class.html>`_
 * `複雑な引数マッチ <mockery_on.html>`_

@@ -1,12 +1,10 @@
 .. index::
-    single: Pass-By-Reference Method Parameter Behaviour
+    single: 参照渡しメソッド引数の振る舞い
 
-Preserving Pass-By-Reference Method Parameter Behaviour
-=======================================================
+参照渡しメソッド引数の振る舞いの保持
+==============================
 
-PHP Class method may accept parameters by reference. In this case, changes
-made to the parameter (a reference to the original variable passed to the
-method) are reflected in the original variable. An example:
+PHPのクラスメソッドは参照私による引数を受け付けます。この場合、引数（メソッドに渡されたオリジナル変数への参照）に対する変化は、オリジナルの変数に反映されます。例をご覧ください。
 
 .. code-block:: php
 
@@ -24,35 +22,17 @@ method) are reflected in the original variable. An example:
     $foo = new Foo;
     $foo->bar($baz);
 
-    echo $baz; // will echo the integer 2
+    echo $baz; // 整数の２をechoする
 
-In the example above, the variable ``$baz`` is passed by reference to
-``Foo::bar()`` (notice the ``&`` symbol in front of the parameter?).  Any
-change ``bar()`` makes to the parameter reference is reflected in the original
-variable, ``$baz``.
+上記の例の場合、``$baz``変数は参照渡し（引数の前の``&``文字に気が付きましたか？）で``Foo::bar()``メソッドに渡されています。``bar()``に変化が起きると、参照渡しではオリジナルの``$baz``に反映されます。
 
-Mockery handles references correctly for all methods where it can analyse
-the parameter (using ``Reflection``) to see if it is passed by reference. To
-mock how a reference is manipulated by the class method, we can use a closure
-argument matcher to manipulate it, i.e. ``\Mockery::on()`` - see the
-`複雑な引数のバリデーション<argument_validation.html#複雑な引数のバリデーション>`_ chapter.
+Mockeryは引数で参照の使用を分析できる箇所では、全てのメソッドを正しく処理します。（``Reflection``を使用）クラスメソッドにより、どのように参照が操作されるかをモックするには、たとえば``\Mockery::on()``でクロージャー引数マッチャーが利用できます。`複雑な引数のバリデーション<argument_validation.html#複雑な引数のバリデーション>`_章をご覧ください。
 
-There is an exception for internal PHP classes where Mockery cannot analyse
-method parameters using ``Reflection`` (a limitation in PHP). To work around
-this, we can explicitly declare method parameters for an internal class using
-``\Mockery\Configuration::setInternalClassMethodParamMap()``.
+（PHPの制限により）``Reflection``を使用したメソッドパラメータの分析ができない、内部PHPクラスは例外です。これを解決するには、``\Mockery\Configuration::setInternalClassMethodParamMap()``を使用し、内部クラスのメソッドパラメータを明示的に宣言します。
 
-Here's an example using ``MongoCollection::insert()``. ``MongoCollection`` is
-an internal class offered by the mongo extension from PECL. Its ``insert()``
-method accepts an array of data as the first parameter, and an optional
-options array as the second parameter. The original data array is updated
-(i.e. when a ``insert()`` pass-by-reference parameter) to include a new
-``_id`` field. We can mock this behaviour using a configured parameter map (to
-tell Mockery to expect a pass by reference parameter) and a ``Closure``
-attached to the expected method parameter to be updated.
+``MongoCollection::insert()``を使用した例をご覧ください。``MongoCollection``はPECLのmongo拡張により提供される内部クラスです。``insert()``メソッドは最初の引数としてデータの配列を受け取り、オプショナルな配列を第２引数に受け取ります。（たとえば、参照渡しの引数が``insert()``されることにより）新しい``_id``フィールドを含むために、オリジナルデータ配列は更新されます。（Mockeryへ引数が参照渡しされることを指示することにより）この振る舞いを引数マップの設定を使用することでモックできます。そして更新されることを期待しているメソッド引数へ``Closure``をアタッチできます。
 
-Here's a PHPUnit unit test verifying that this pass-by-reference behaviour is
-preserved:
+この参照渡しの動作が保持されていることを検査するPHPUnitのユニットテストをご覧ください。
 
 .. code-block:: php
 
@@ -82,11 +62,10 @@ preserved:
         \Mockery::resetContainer();
     }
 
-Protected Methods
------------------
+protectedメソッド
+----------------
 
-When dealing with protected methods, and trying to preserve pass by reference
-behavior for them, a different approach is required.
+protectedメソッドを使用しており、参照渡しの振る舞いを保持しようとする場合は、異なったアプローチが必要です。
 
 .. code-block:: php
 
@@ -124,7 +103,4 @@ behavior for them, a different approach is required.
         }
     }
 
-This is quite an edge case, so we need to change the original code a little bit,
-by creating a public method that will call our protected method, and then mock
-that, instead of the protected method. This new public method will act as a
-proxy to our protected method.
+これは極めてまれなケースですので、オリジナルのコードを多少変更する必要があります。protectedメソッドを呼び出すpublicメソッドを作成しました。それから、protectedメソッドの代わりに、publicメソッドをモックしています。この新しいpublicメソッドはprotectedメソッドのプロキシとして動作します。

@@ -1,12 +1,12 @@
 .. index::
-    single: Cookbook; Mocking Hard Dependencies
+    single: Cookbook; 強い依存のモック
 
-Mocking Hard Dependencies (new Keyword)
-=======================================
+強い依存のモック
+=============
 
-One prerequisite to mock hard dependencies is that the code we are trying to test uses autoloading.
+強い依存をモックする場合の前提の一つは、テストを行うコードがオートローディングを使用していることです。
 
-Let's take the following code for an example:
+例として、以下のコードを見てみましょう。
 
 .. code-block:: php
 
@@ -22,7 +22,7 @@ Let's take the following code for an example:
         }
     }
 
-The way we can test this without doing any changes to the code itself is by creating :doc:`instance mocks </reference/instance_mocking>` by using the ``overload`` prefix.
+コードに手を加えることなく、これをテストできる方法は、`インスタンスモック<instance_mocking.html>`_へ``overload``プレフィックスを付け、生成することです。
 
 .. code-block:: php
 
@@ -51,15 +51,15 @@ The way we can test this without doing any changes to the code itself is by crea
         }
     }
 
-If we run this test now, it should pass. Mockery does its job and our ``App\Service`` will use the mocked external service instead of the real one.
+これでこのテストを実行すれば、パスするでしょう。Mockeryは自身の仕事を行い、さらに本当のexternalサービスの代わりに、``App\Service``を使ったexternalをモックします。
 
-The problem with this is when we want to, for example, test the ``App\Service\External`` itself, or if we use that class somewhere else in our tests.
+これが問題となるのは、たとえば``App\Service\External``自身をテストしているか、このクラスを他のテストで使用したい場合です。
 
-When Mockery overloads a class, because of how PHP works with files, that overloaded class file must not be included otherwise Mockery will throw a "class already exists" exception. This is where autoloading kicks in and makes our job a lot easier.
+Mockeryがあるクラスをオーバーロードする場合、PHPのファイルの取り扱いにより、元のオーバーロードされるクラスを読み込んではいけません。そうしないと、"class already exists"例外が投げられます。これがオートローディングが取り入れられている理由であり、私達の負担を軽くしているのです。
 
-To make this possible, we'll tell PHPUnit to run the tests that have overloaded classes in separate processes and to not preserve global state. That way we'll avoid having the overloaded class included more than once. Of course this has its downsides as these tests will run slower.
+クラスをオーバーロードするテストを可能にするには、PHPUnitへ別々のプロセスでテストを行い、グローバルステイトを防ぐ指示を行います。この方法により、クラスファイルを何度もオーバーロードするのを防げます。もちろん、副作用があり、テストの実行が遅くなることです。
 
-Our test example from above now becomes:
+上のテスト例は、次のようになります。
 
 .. code-block:: php
 
@@ -92,8 +92,8 @@ Our test example from above now becomes:
         }
     }
 
-.. note::
+|nbsp|
 
-    This cookbook entry is an adaption of the blog post titled
-    `"Mocking hard dependencies with Mockery" <https://robertbasic.com/blog/mocking-hard-dependencies-with-mockery/>`_,
-    published by Robert Basic on his blog.
+    {note} このクックブックエントリは、Robertにより書かれたプログ、`"Mocking hard dependencies with Mockery" <https://robertbasic.com/blog/mocking-hard-dependencies-with-mockery/>`_の基本部分を引用したものです。
+
+.. |nbsp| unicode:: 0xA0 .. non breaking space

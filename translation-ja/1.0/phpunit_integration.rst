@@ -1,14 +1,10 @@
 .. index::
-    single: PHPUnit Integration
+    single: PHPUnitとの統合
 
-PHPUnit Integration
-===================
+PHPUnitとの統合
+==============
 
-Mockery was designed as a simple-to-use *standalone* mock object framework, so
-its need for integration with any testing framework is entirely optional.  To
-integrate Mockery, we need to define a ``tearDown()`` method for our tests
-containing the following (we may use a shorter ``\Mockery`` namespace
-alias):
+Mockeryは簡単に利用できる **スタンドアローン** モックオブジェクトフレームワークとして設計されていますので、テストフレームワークとの統合は完全に任意です。Mockeryを統合するには、テストへ以下のように``tearDown()``メソッドを定義する必要があります。（Mockeryに、より短い名前空間のエイリアスを使えます。）
 
 .. code-block:: php
 
@@ -16,11 +12,9 @@ alias):
         \Mockery::close();
     }
 
-This static call cleans up the Mockery container used by the current test, and
-run any verification tasks needed for our expectations.
+この静的呼び出しは、現在のテストで使用したMockeryコンテナをクリーンアップし、エクスペクションで必要な確認のタスクを実行します。
 
-For some added brevity when it comes to using Mockery, we can also explicitly
-use the Mockery namespace with a shorter alias. For example:
+簡潔にMockeryを使用したい場合、より短いエイリアスをMockeryの名前空間に使用することもできます。
 
 .. code-block:: php
 
@@ -40,10 +34,7 @@ use the Mockery namespace with a shorter alias. For example:
         }
     }
 
-Mockery ships with an autoloader so we don't need to litter our tests with
-``require_once()`` calls. To use it, ensure Mockery is on our
-``include_path`` and add the following to our test suite's ``Bootstrap.php``
-or ``TestHelper.php`` file:
+Mockeryにはオートローダーが含まれていますので、 ``require_once()``をテストで呼び出す必要はありません。これを利用するには、Mockeryを確実に``include_path``へ置き、テストスーツの``Bootstrap.php``や``TestHelper.php``ファイルへ以下のコードを追加してください。
 
 .. code-block:: php
 
@@ -53,22 +44,17 @@ or ``TestHelper.php`` file:
     $loader = new \Mockery\Loader;
     $loader->register();
 
-If we are using Composer, we can simplify this to including the Composer
-generated autoloader file:
+Composerを使用している場合は、Composerが生成したオートローダーファイルを読み込むだけです。
 
 .. code-block:: php
 
-    require __DIR__ . '/../vendor/autoload.php'; // assuming vendor is one directory up
+    require __DIR__ . '/../vendor/autoload.php'; // vendorディレクトリーが一段上の階層と仮定
 
-.. caution::
+|nbsp|
 
-    Prior to Hamcrest 1.0.0, the ``Hamcrest.php`` file name had a small "h"
-    (i.e. ``hamcrest.php``).  If upgrading Hamcrest to 1.0.0 remember to check
-    the file name is updated for all your projects.)
+    注意：Hamcrest1.0.0より前のバージョンでは、``Hamcrest.php``ファイル名は小文字の"h"（たとえば``hamcrest.php``）でした。Hamcrestを1.0.0へアップグレードする場合は、全プロジェクトのファイル名を確認するのを忘れないでください。
 
-To integrate Mockery into PHPUnit and avoid having to call the close method
-and have Mockery remove itself from code coverage reports, have your test case
-extends the ``\Mockery\Adapter\Phpunit\MockeryTestCase``:
+MockeryをPHPUnitと統合し、closeメソッドの呼び出しと、コードカバレージメソッドからMockery自身を削除するには、 テストケースで``\Mockery\Adapter\Phpunit\MockeryTestCase``を拡張してください。
 
 .. code-block:: php
 
@@ -77,7 +63,7 @@ extends the ``\Mockery\Adapter\Phpunit\MockeryTestCase``:
 
     }
 
-An alternative is to use the supplied trait:
+提供しているトレイトを使用し、別の書き方もできます。
 
 .. code-block:: php
 
@@ -86,23 +72,16 @@ An alternative is to use the supplied trait:
         use \Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
     }
 
-Extending ``MockeryTestCase`` or using the ``MockeryPHPUnitIntegration``
-trait is **the recommended way** of integrating Mockery with PHPUnit,
-since Mockery 1.0.0.
+``MockeryTestCase``を拡張するか、``MockeryPHPUnitIntegration``を使用するのは、Mockery1.0.0からMockeryとPHPUnitを統合するため、 **推奨している方法** です。
 
-PHPUnit listener
-----------------
+PHPUnitリスナー
+--------------
 
-Before the 1.0.0 release, Mockery provided a PHPUnit listener that would
-call ``Mockery::close()`` for us at the end of a test. This has changed
-significantly since the 1.0.0 version.
+1.0.0より前のリリースでMockeryは、テストの最後で``Mockery::close()``を呼び出すためのPHPUnitリスナーを提供していました。
 
-Now, Mockery provides a PHPUnit listener that makes tests fail if
-``Mockery::close()`` has not been called. It can help identify tests where
-we've forgotten to include the trait or extend the ``MockeryTestCase``.
+現在、``Mockery::close()``が呼び出されない場合にテストを失敗にするために、PHPUnitリスナーを提供しています。トレイトを使い忘れたり、``MockeryTestCase``を拡張し忘れたりしたケースを見分けるのに役立つでしょう。
 
-If we are using PHPUnit's XML configuration approach, we can include the
-following to load the ``TestListener``:
+PHPUnitのXML設定を使うアプローチの場合は、``TestListener``をロードするために、以下のコードを読み込んでください。
 
 .. code-block:: xml
 
@@ -110,42 +89,30 @@ following to load the ``TestListener``:
         <listener class="\Mockery\Adapter\Phpunit\TestListener"></listener>
     </listeners>
 
-Make sure Composer's or Mockery's autoloader is present in the bootstrap file
-or we will need to also define a "file" attribute pointing to the file of the
-``TestListener`` class.
+ComposerかMockeryのオートローダーをブートストラップファイルへ確実に用意するか、もしくは"file"属性が``TestListener``クラスを指すようにする必要があります。
 
-.. caution::
+    注意：``TestListener``はPHPUnitバージョン６以降で動作します。
 
-    The ``TestListener`` will only work for PHPUnit 6+ versions.
+    PHPUnitのバージョン５以前では、テストリスナーは動作しません。
 
-    For PHPUnit versions 5 and lower, the test listener does not work.
-
-If we are creating the test suite programmatically we may add the listener
-like this:
+テストスーツをプログラマティックに生成している場合は、リスナーを以下のように追加できます。
 
 .. code-block:: php
 
-    // Create the suite.
+    // テストスーツの生成
     $suite = new PHPUnit\Framework\TestSuite();
 
-    // Create the listener and add it to the suite.
+    // リスナーを生成し、スーツへ追加する
     $result = new PHPUnit\Framework\TestResult();
     $result->addListener(new \Mockery\Adapter\Phpunit\TestListener());
 
-    // Run the tests.
+    // テストの実行
     $suite->run($result);
 
-.. caution::
+|nbsp|
 
-    PHPUnit provides a functionality that allows
-    `tests to run in a separated process <http://phpunit.de/manual/current/en/appendixes.annotations.html#appendixes.annotations.runTestsInSeparateProcesses>`_,
-    to ensure better isolation. Mockery verifies the mocks expectations using the
-    ``Mockery::close()`` method, and provides a PHPUnit listener, that automatically
-    calls this method for us after every test.
+    より独立性を高めるため、PHPUnitは`テストを個別のPHPプロセスで実行する<https://phpunit.de/manual/current/ja/appendixes.annotations.html#appendixes.annotations.runInSeparateProcess>`_機能を提供しています。Mockeryはモックのエクスペクションを``Mockery::close()``メソッドを使用し確認しており、各テストの終了時にこのメソッドを自動的に呼び出すために、PHPUnitリスナーを提供しています。
 
-    However, this listener is not called in the right process when using
-    PHPUnit's process isolation, resulting in expectations that might not be
-    respected, but without raising any ``Mockery\Exception``. To avoid this,
-    we cannot rely on the supplied Mockery PHPUnit ``TestListener``, and we need
-    to explicitly call ``Mockery::close``. The easiest solution to include this
-    call in the ``tearDown()`` method, as explained previously.
+    しかしながら、このリスナーはPHPUnitのプロセスを個別で実行した場合、正しく呼び出されず、エクスペクションの結果は考慮されないため、``Mockery\Exception``は発生しません。これを防ぐには、Mockeryが提供するPHPUnitの``TestListener``は使用せず、明確に``Mockery::close``を呼び出す必要があります。簡単な解決策は、以前説明したとおりに、``tearDown()``メソッドの中でこれを呼び出します。
+
+.. |nbsp| unicode:: 0xA0 .. non breaking space

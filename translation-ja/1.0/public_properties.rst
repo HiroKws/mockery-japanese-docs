@@ -1,20 +1,11 @@
 .. index::
-    single: Mocking; Public Properties
+    single: Mocking; publicプロパティ
 
-Mocking Public Properties
-=========================
+publicプロパティのモック
+=====================
 
-Mockery allows us to mock properties in several ways. One way is that we can set
-a public property and its value on any mock object. The second is that we can
-use the expectation methods ``set()`` and ``andSet()`` to set property values if
-that expectation is ever met.
+Mockeryでは、様々な方法でプロパティをモックできます。 一つの方法はpublicプロパティとその値をモックオブジェクトへセットする方法です。２つ目の方法は、そのエクスペクションがまだ一致していない場合に``set()``と``andSet()``のエクスペクションメソッドを使用し、プロパティの値をセットできます。
 
-You can read more about `publicプロパティの設定<expectations.html#publicプロパティの設定>`_
+詳細は、`publicプロパティの設定<expectations.html#publicプロパティの設定>`_をお読みください。
 
-.. note::
-
-    In general, Mockery does not support mocking any magic methods since these
-    are generally not considered a public API (and besides it is a bit difficult
-    to differentiate them when you badly need them for mocking!). So please mock
-    virtual properties (those relying on ``__get()`` and ``__set()``) as if they
-    were actually declared on the class.
+    {note} Mockeryはマジックメソッドのモックをサポートしていません。マジックメソッドはpublicなAPIだとは一般的に考えられていないためです。（また他の理由として、皆さんがマジックメソッドをモックしようと企んでいる場合、識別するのが多少面倒だからです。）（``__get()``と``__set()``に関連している）仮想プロパティをモックする場合は、クラス上で実際に宣言されているものとしてモックしてください。
