@@ -5,3 +5,4 @@
 /generate-all
 generate-all
 deploy
+before-commit.txt
