@@ -66,7 +66,7 @@
 
     $spy->shouldNotHaveReceived('foo');
 
-スパイスでも、引数のマッチングが行なえます。
+スパイでも、引数のマッチングが行なえます。
 
 .. code-block:: php
 
@@ -100,7 +100,7 @@ shouldReceiveの別型
 
 Mockerのshould*メソッドのように文字列ではなく、Mockery1.0.0よりPHPメソッドを呼び出すような指定方法をサポートします。
 
-スパイスの場合、これは``shouldHaveReceived()``メソッドだけに適用されます。
+スパイの場合、これは``shouldHaveReceived()``メソッドだけに適用されます。
 
 .. code-block:: php
 
