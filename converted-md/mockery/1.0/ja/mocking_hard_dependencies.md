@@ -98,6 +98,6 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
  
 
 > {note}
-> このクックブックエントリは、Robertにより書かれたプログ、[\"Mocking
+> このクックブックエントリは、Robertにより書かれたブログ、[\"Mocking
 > hard dependencies with
 > Mockery\"](https://robertbasic.com/blog/mocking-hard-dependencies-with-mockery/)の基本部分を引用したものです。

@@ -94,6 +94,6 @@ Mockeryがあるクラスをオーバーロードする場合、PHPのファイ�
 
 |nbsp|
 
-    {note} このクックブックエントリは、Robertにより書かれたプログ、`"Mocking hard dependencies with Mockery" <https://robertbasic.com/blog/mocking-hard-dependencies-with-mockery/>`_の基本部分を引用したものです。
+    {note} このクックブックエントリは、Robertにより書かれたブログ、`"Mocking hard dependencies with Mockery" <https://robertbasic.com/blog/mocking-hard-dependencies-with-mockery/>`_の基本部分を引用したものです。
 
 .. |nbsp| unicode:: 0xA0 .. non breaking space
