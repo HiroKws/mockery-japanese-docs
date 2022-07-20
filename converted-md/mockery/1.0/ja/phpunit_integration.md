@@ -1,14 +1,13 @@
-::: {.index}
+::: index
 single: PHPUnitとの統合
 :::
 
-PHPUnitとの統合
-===============
+# PHPUnitとの統合
 
 Mockeryは簡単に利用できる **スタンドアローン**
 モックオブジェクトフレームワークとして設計されていますので、テストフレームワークとの統合は完全に任意です。Mockeryを統合するには、テストへ以下のように`tearDown()`メソッドを定義する必要があります。（Mockeryに、より短い名前空間のエイリアスを使えます。）
 
-``` {.php}
+``` php
 public function tearDown() {
     \Mockery::close();
 }
@@ -18,7 +17,7 @@ public function tearDown() {
 
 簡潔にMockeryを使用したい場合、より短いエイリアスをMockeryの名前空間に使用することもできます。
 
-``` {.php}
+``` php
 use \Mockery as m;
 
 class SimpleTest extends \PHPUnit\Framework\TestCase
@@ -39,7 +38,7 @@ class SimpleTest extends \PHPUnit\Framework\TestCase
 Mockeryにはオートローダーが含まれていますので、
 `require_once()`をテストで呼び出す必要はありません。これを利用するには、Mockeryを確実に`include_path`へ置き、テストスーツの`Bootstrap.php`や`TestHelper.php`ファイルへ以下のコードを追加してください。
 
-``` {.php}
+``` php
 require_once 'Mockery/Loader.php';
 require_once 'Hamcrest/Hamcrest.php';
 
@@ -49,7 +48,7 @@ $loader->register();
 
 Composerを使用している場合は、Composerが生成したオートローダーファイルを読み込むだけです。
 
-``` {.php}
+``` php
 require __DIR__ . '/../vendor/autoload.php'; // vendorディレクトリーが一段上の階層と仮定
 ```
 
@@ -60,7 +59,7 @@ require __DIR__ . '/../vendor/autoload.php'; // vendorディレクトリーが�
 MockeryをPHPUnitと統合し、closeメソッドの呼び出しと、コードカバレージメソッドからMockery自身を削除するには、
 テストケースで`\Mockery\Adapter\Phpunit\MockeryTestCase`を拡張してください。
 
-``` {.php}
+``` php
 class MyTest extends \Mockery\Adapter\Phpunit\MockeryTestCase
 {
 
@@ -69,7 +68,7 @@ class MyTest extends \Mockery\Adapter\Phpunit\MockeryTestCase
 
 提供しているトレイトを使用し、別の書き方もできます。
 
-``` {.php}
+``` php
 class MyTest extends \PHPUnit\Framework\TestCase
 {
     use \Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -79,8 +78,7 @@ class MyTest extends \PHPUnit\Framework\TestCase
 `MockeryTestCase`を拡張するか、`MockeryPHPUnitIntegration`を使用するのは、Mockery1.0.0からMockeryとPHPUnitを統合するため、
 **推奨している方法** です。
 
-PHPUnitリスナー
----------------
+## PHPUnitリスナー
 
 1.0.0より前のリリースでMockeryは、テストの最後で`Mockery::close()`を呼び出すためのPHPUnitリスナーを提供していました。
 
@@ -88,7 +86,7 @@ PHPUnitリスナー
 
 PHPUnitのXML設定を使うアプローチの場合は、`TestListener`をロードするために、以下のコードを読み込んでください。
 
-``` {.xml}
+``` xml
 <listeners>
     <listener class="\Mockery\Adapter\Phpunit\TestListener"></listener>
 </listeners>
@@ -102,7 +100,7 @@ ComposerかMockeryのオートローダーをブートストラップファイ�
 
 テストスーツをプログラマティックに生成している場合は、リスナーを以下のように追加できます。
 
-``` {.php}
+``` php
 // テストスーツの生成
 $suite = new PHPUnit\Framework\TestSuite();
 

@@ -1,22 +1,20 @@
-::: {.index}
+::: index
 single: ;エクスペクション
 :::
 
-エクスペクションの宣言
-======================
+# エクスペクションの宣言
 
 > {note}
 > エクスペクション（期待）を動作させるためには、`Mockery::close()`を`tearDown`や`_before`のようなコールバックメソッドの中で実行する必要があります。（Mockeryが他のフレームワークと統合されているかどうかによります。）この静的呼び出しで、現在のテストで使用したMockeryのコンテナをクリーンアップし、エクスペクションのために必要な検査タスクが実行されます。
 
 モックオブジェクトを生成したら、それがどのように振る舞うべきか（さらに、どのように呼び出されるか）を正確に宣言し始めることになります。これはMockeryのエクスペクション宣言の役割です。
 
-メソッド呼び出しのエクスペクション宣言
---------------------------------------
+## メソッド呼び出しのエクスペクション宣言
 
 名前を指定し、そのメソッドが呼び出されるのを期待していることをテストダブルへ伝えるには、`shouldReceive`
 メソッドを使用します。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method');
 ```
@@ -25,7 +23,7 @@ $mock->shouldReceive('name_of_method');
 
 期待しているメソッド呼び出しを２つ以上指定できます。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method_1', 'name_of_method_2');
 ```
@@ -34,7 +32,7 @@ $mock->shouldReceive('name_of_method_1', 'name_of_method_2');
 
 メソッド呼び出しのエクスペクションと、返される値を宣言することもできます。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive([
     'name_of_method_1' => 'return value 1',
@@ -44,7 +42,7 @@ $mock->shouldReceive([
 
 メソッド呼び出しのエクスペクションと戻り値を更に短く指定する方法です。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass', ['name_of_method_1' => 'return value 1', 'name_of_method_2' => 'return value 2']);
 ```
 
@@ -52,19 +50,18 @@ $mock = \Mockery::mock('MyClass', ['name_of_method_1' => 'return value 1', 'name
 
 テストダブルで名前を指定し、呼び出されないことを期待する宣言もできます。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldNotReceive('name_of_method');
 ```
 
 これは、`shouldReceive()->never()`呼び出しの短縮形です。
 
-メソッド引数のエクスペクション宣言
-----------------------------------
+## メソッド引数のエクスペクション宣言
 
 エクスペクションを宣言した全てのメソッドに対し、期待する引数のリストと一致するメソッド呼び出しのみに適用するように制約を付け加えることができます。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method')
     ->with($arg1, $arg2, ...);
@@ -77,7 +74,7 @@ $mock->shouldReceive('name_of_method')
 
 つまり、重要な注意点は、指定された全エクスペクションは、指定したメソッドが指定した引数で呼び出された場合のみ、適用されるということです。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 
 $mock->shouldReceive('foo')->with('Hello');
@@ -91,7 +88,7 @@ $mock->foo('Goodbye'); // NoMatchingExpectationExceptionが投げられる
 
 組み込み済みのマッチャーを各引数に指定する代わりに、渡された引数全部を一度にマッチングする、クロージャを渡すことができます。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method')
     ->withArgs(closure);
@@ -99,7 +96,7 @@ $mock->shouldReceive('name_of_method')
 
 メソッド呼び出し時に渡された引数を指定したグロージャーは受け取ります。このエクスペクションはメソッドがコールされ、渡した引数がクロージャでtureと評価される場合に、適用されます。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 
 $mock->shouldReceive('foo')->withArgs(function ($arg) {
@@ -117,7 +114,7 @@ $mock->foo(3); // NoMatchingExpectationExceptionが投げられる
 
 どんな引数がメソッド呼び出しで渡されてもマッチする、エクスペクションを宣言することができます。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method')
     ->withAnyArgs();
@@ -127,20 +124,19 @@ $mock->shouldReceive('name_of_method')
 
 引数がないメソッドコールに一致するエクスペクションを宣言することができます。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method')
     ->withNoArgs();
 ```
 
-戻り値のエクスペクション宣言
-----------------------------
+## 戻り値のエクスペクション宣言
 
 モックオブジェクトに対し、期待しているメソッド呼び出しでどのような戻り値が返されるのかをMockeryへ指示できます。
 
 そのためには、`andReturn()`メソッドを使用します。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method')
     ->andReturn($value);
@@ -150,7 +146,7 @@ $mock->shouldReceive('name_of_method')
 
 エクスペクションへ複数の返り値を指定することも可能です。返り値を続けて記述することで、メソッドの呼び出しごとにどんな値が返されるかをMockeryへ指示します。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method')
     ->andReturn($value1, $value2, ...)
@@ -160,7 +156,7 @@ $mock->shouldReceive('name_of_method')
 
 宣言した戻り値より、多くの回数メソッドが呼び出された場合、Mockeryはその後のメソッドコールでは最後の値を返します。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 
 $mock->shouldReceive('foo')->andReturn(1, 2, 3);
@@ -173,7 +169,7 @@ $mock->foo(); // int(3)
 
 別の記述法で、同じ指定が行えます。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method')
     ->andReturnValues([$value1, $value2, ...])
@@ -183,7 +179,7 @@ $mock->shouldReceive('name_of_method')
 
 以下の２つの書き方も、テストを読む人とのコミュニケーションに役立つでしょう。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method')
     ->andReturnNull();
@@ -196,7 +192,7 @@ $mock->shouldReceive('name_of_method')
 
 ときどき、メソッドへ渡された引数に基づいて、返り値を計算したい場合があります。１つ以上のクロージャを受け取る、`andReturnUsing()`メソッドを使用して行えます。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method')
     ->andReturnUsing(closure, ...);
@@ -208,7 +204,7 @@ $mock->shouldReceive('name_of_method')
 
 fluid interfacesをモックしている場合、以下のメソッドが役立ちます。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method')
     ->andReturnSelf();
@@ -216,12 +212,11 @@ $mock->shouldReceive('name_of_method')
 
 モックしているクラス名を返り値として指定します。
 
-例外発生のエクスペクション
---------------------------
+## 例外発生のエクスペクション
 
 モックオブジェクトのメソッドで例外を投げるように指示することも可能です。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method')
     ->andThrow(Exception);
@@ -231,18 +226,17 @@ $mock->shouldReceive('name_of_method')
 
 オブジェクトではなく、`Exception`クラスとメッセージを引数で渡し、モックしたメソッドから`Exception`を投げることもできます。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method')
     ->andThrow(exception_name, message);
 ```
 
-publicプロパティの設定
-----------------------
+## publicプロパティの設定
 
 メソッド呼び出しに一致するエクスペクションを使用し、`andSet()`か`set()`により、モックオブジェクトのpublicプロパティへ特定の値をセットできます。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method')
     ->andSet($property, $value);
@@ -253,14 +247,13 @@ $mock->shouldReceive('name_of_method')
 
 モックしているクラスの本当のメソッドを呼び出し、その結果を返したい場合は、`passthru()`メソッドで戻り値のキューをバイパスするようにエクセプションへ指示します。
 
-``` {.php}
+``` php
 passthru()
 ```
 
 本当のメソッドに対しマッチングと呼び出し回数のバリデーションが利用でき、その場合も本当のクラスメソッドを期待する引数で呼び出します。
 
-呼び出し回数のエクスペクション宣言
-----------------------------------
+## 呼び出し回数のエクスペクション宣言
 
 メソッド呼び出しの引数へエクスペクションを指定し、同じメソッド呼び出しに戻り値を指定するのに加え、メソッドが呼び出される回数のエクスペクションを指定することができます。
 
@@ -271,7 +264,7 @@ passthru()
 
 メソッドの呼び出し回数を問わない宣言を行うことができます。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method')
     ->zeroOrMoreTimes();
@@ -281,7 +274,7 @@ $mock->shouldReceive('name_of_method')
 
 特定の回数メソッドが呼ばれることを期待する場合は、以下の要領でMockeryに指示します。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method')
     ->times($n);
@@ -293,7 +286,7 @@ $mock->shouldReceive('name_of_method')
 
 期待しているメソッドが一回のみ呼び出されることを宣言するには：
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method')
     ->once();
@@ -301,7 +294,7 @@ $mock->shouldReceive('name_of_method')
 
 期待しているメソッドが２回呼び出されることを宣言するには：
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method')
     ->twice();
@@ -309,7 +302,7 @@ $mock->shouldReceive('name_of_method')
 
 期待しているメソッドが、呼び出されないことを宣言するには：
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method')
     ->never();
@@ -321,7 +314,7 @@ $mock->shouldReceive('name_of_method')
 
 もし、Mockeryにメソッドの最低実行回数を指定したい場合は、`atLeast()`を使います。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method')
     ->atLeast()
@@ -332,7 +325,7 @@ $mock->shouldReceive('name_of_method')
 
 同様に、実行すべき最大実行回数をMockeryへ指示できます。`atMost()`を使用してください。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method')
     ->atMost()
@@ -343,7 +336,7 @@ $mock->shouldReceive('name_of_method')
 
 呼び出し回数の範囲を`between()`で指定することもできます。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method')
     ->between($min, $max);
@@ -352,12 +345,11 @@ $mock->shouldReceive('name_of_method')
 実際にこれは、`atLeast()->times($min)->atMost()->times($max)`と同じですが、短縮されています。
 引数のない`times()`を続けて、APIの自然言語的読みやすさを保つことができます。
 
-エクスペクション宣言ユーティリティー
-------------------------------------
+## エクスペクション宣言ユーティリティー
 
 似たような指定のメソッドと関連して、特定の順番でメソッドが呼び出されるのを期待する宣言ができます。
 
-``` {.php}
+``` php
 ordered()
 ```
 
@@ -365,7 +357,7 @@ ordered()
 
 （名前や番号で指定される）オーダーグループに従い、メソッドを宣言できます。グループ内のメソッドは、どんな順番でも呼び出されますが、グループ外の順番は、他のグループとの順番通りになる必要があります。
 
-``` {.php}
+``` php
 ordered(group)
 ```
 
@@ -373,7 +365,7 @@ ordered(group)
 
 `ordered()`や`ordered(group)`を呼び出す前に、この順番は現在のモックオブジェクトのみに適用されるわけでなく、全モックオブジェクト間の順番であると宣言できます。
 
-``` {.php}
+``` php
 globally()
 ```
 
@@ -381,7 +373,7 @@ globally()
 
 `byDefault()`により、デフォルトのエクスペクションを指定できます。デフォルトでないエクスペクションが作成されない限り、このデフォルトエクスペクションが適用されます。
 
-``` {.php}
+``` php
 byDefault()
 ```
 
@@ -389,12 +381,12 @@ byDefault()
 
 エクスペクションのチェーンで、現在のモックオブジェクトを返す場合は：
 
-``` {.php}
+``` php
 getMock()
 ```
 
 一行でモックの準備を行いたい場合に便利です。たとえば：
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('foo')->shouldReceive('foo')->andReturn(1)->getMock();
 ```

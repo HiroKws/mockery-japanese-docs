@@ -1,13 +1,12 @@
-::: {.index}
+::: index
 single: シンプルな例
 :::
 
-シンプルな例
-============
+# シンプルな例
 
 平均気温をレポートするために、ある地方の気温を測定する`Temperature`クラスがあるとイメージしてください。そのデーターはWebサービスから取得しても、他の情報源から取得してもかまいません。ですが現在手元にありません。しかし`Temperature`クラスとのやり取りに基づき、それらのクラスの基本的なやり取りを仮定することはできます。
 
-``` {.php}
+``` php
 class Temperature
 {
     private $service;
@@ -30,7 +29,7 @@ class Temperature
 
 実際のサービスクラスが無くても、どのような操作が行われることが期待されるか理解できます。`Temperature`クラスに対するテストを書くには、実際に必要な具象サービスのインスタンスが存在しなくても、振る舞いをテストするため今のところは、本物のサービスをモックオブジェクトで置き換えておくことは可能です。
 
-``` {.php}
+``` php
 use \Mockery;
 
 class TemperatureTest extends PHPUnit_Framework_TestCase

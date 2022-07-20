@@ -1,15 +1,14 @@
-::: {.index}
+::: index
 single: Mocking; protectedメソッド
 :::
 
-protectedメソッドのモック
-=========================
+# protectedメソッドのモック
 
 デフォルトでは、Mockeryはprotectedメソッドのモックを行えません。protectedメソッドのモックは推奨していませんが、他に手段がない場合があります。
 
 そうしたケースのため、`shouldAllowMockingProtectedMethods()`メソッドがあります。これはMockeryへそのクラスだけprotectedメソッドのモックを特別に許すように指示します。
 
-``` {.php}
+``` php
 class MyClass
 {
     protected function foo()

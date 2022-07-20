@@ -1,13 +1,12 @@
-::: {.index}
+::: index
 single: Mocking; デメテルチェーン
 :::
 
-デメテルチェーンとfluentインターフェイスのモック
-================================================
+# デメテルチェーンとfluentインターフェイスのモック
 
 両語ともに以下のような形態の、よく使われるようになってきたメソッド起動の実働コードを意味します。
 
-``` {.php}
+``` php
 $object->foo()->bar()->zebra()->alpha()->selfDestruct();
 ```
 
@@ -15,7 +14,7 @@ $object->foo()->bar()->zebra()->alpha()->selfDestruct();
 
 どちらの場合でも、このようなチェーンをモックするのはひどい仕事になり得ます。簡単にするために、Mockeryはデメテルチェーンのモックをサポートしています。簡潔に言えば、チェーン全体のショートカット記法と、最後の呼び出しの戻り値の定義です。例として、`selfDestruct()`メソッドが、文字列の\"Ten!\"を（`CaptainsConsole`のインスタンスの）オブジェクトへ返すと仮定してみましょう。これをモックする例をご覧ください。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('CaptainsConsole');
 $mock->shouldReceive('foo->bar->zebra->alpha->selfDestruct')->andReturn('Ten!');
 ```

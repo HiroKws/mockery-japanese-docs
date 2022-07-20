@@ -1,15 +1,14 @@
-::: {.index}
+::: index
 single: Cookbook; 強い依存のモック
 :::
 
-強い依存のモック
-================
+# 強い依存のモック
 
 強い依存をモックする場合の前提の一つは、テストを行うコードがオートローディングを使用していることです。
 
 例として、以下のコードを見てみましょう。
 
-``` {.php}
+``` php
 <?php
 namespace App;
 class Service
@@ -25,7 +24,7 @@ class Service
 
 コードに手を加えることなく、これをテストできる方法は、[インスタンスモック](instance_mocking.html)へ`overload`プレフィックスを付け、生成することです。
 
-``` {.php}
+``` php
 <?php
 namespace AppTest;
 use Mockery as m;
@@ -64,7 +63,7 @@ exists\"例外が投げられます。これがオートローディングが取
 
 上のテスト例は、次のようになります。
 
-``` {.php}
+``` php
 <?php
 namespace AppTest;
 use Mockery as m;

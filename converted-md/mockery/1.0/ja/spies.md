@@ -1,9 +1,8 @@
-::: {.index}
+::: index
 single: Reference; スパイ
 :::
 
-スパイ
-======
+# スパイ
 
 スパイはテストダブルの一タイプですが、スタブやモックとは異なり、スパイはスパイとSUT(System
 Under
@@ -13,7 +12,7 @@ Test)間のやり取りを記憶し、後ほどやり取りをアサートでき
 
 スパイはテストにおける、よりわかりやすいArrange-Act-Assertや、Given-When-Thenスタイルにより適しています。モックではわかりやすいスタイルが薄れ、Arrange-Expect-Act-Assertの長い行になり、SUTに対し行動を起こす前に何を期待しているのかモックへ指示し、それからエクスペクションが一致したことをアサートする必要があります。
 
-``` {.php}
+``` php
 // arrange（準備）
 $mock = \Mockery::mock('MyDependency');
 $sut = new MyClass($mock);
@@ -32,7 +31,7 @@ $sut->callFoo();
 
 スパイでは期待(expect）の部分を飛ばせ、SUTに対して実行した後にアサートへ移動でき、通常テストがより読みやすくなります。
 
-``` {.php}
+``` php
 // arrange（準備）
 $spy = \Mockery::spy('MyDependency');
 $sut = new MyClass($spy);
@@ -57,38 +56,37 @@ $spy->shouldHaveReceived()
 > Spies\"](https://davedevelopment.co.uk/2014/10/09/mockery-spies.html),から取ったものです。Dave
 > MarshallはMockeryのスパイの初めの作者です。
 
-スパイリファレンス
-------------------
+## スパイリファレンス
 
 スパイでメソッドコールを確認する場合、`shouldHaveReceived()`メソッドを使用します。
 
-``` {.php}
+``` php
 $spy->shouldHaveReceived('foo');
 ```
 
 スパイでメソッドが呼び出され **ない**
 ことを確認するには、`shouldNotHaveReceived()`メソッドを使用します。
 
-``` {.php}
+``` php
 $spy->shouldNotHaveReceived('foo');
 ```
 
 スパイでも、引数のマッチングが行なえます。
 
-``` {.php}
+``` php
 $spy->shouldHaveReceived('foo')
     ->with('bar');
 ```
 
 引数のマッチングは、マッチさせる引数の配列を渡すことでも可能です。
 
-``` {.php}
+``` php
 $spy->shouldHaveReceived('foo', ['bar']);
 ```
 
 メソッドが呼び出されないことを検査する場合でも、`shouldNotHaveReceived()`メソッドの第２引数に引数の配列を指定することで、検査できます。
 
-``` {.php}
+``` php
 $spy->shouldNotHaveReceived('foo', ['bar']);
 ```
 
@@ -96,7 +94,7 @@ $spy->shouldNotHaveReceived('foo', ['bar']);
 
 最後に、呼び出しの受け取りを期待する時、実行回数を調べることもできます。
 
-``` {.php}
+``` php
 $spy->shouldHaveReceived('foo')
     ->with('bar')
     ->twice();
@@ -108,14 +106,14 @@ Mockerのshould\*メソッドのように文字列ではなく、Mockery1.0.0よ
 
 スパイの場合、これは`shouldHaveReceived()`メソッドだけに適用されます。
 
-``` {.php}
+``` php
 $spy->shouldHaveReceived()
     ->foo('bar');
 ```
 
 同様に、呼び出し回数のエクスペクションをセットできます。
 
-``` {.php}
+``` php
 $spy->shouldHaveReceived()
     ->foo('bar')
     ->twice();

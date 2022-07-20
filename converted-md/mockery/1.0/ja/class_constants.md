@@ -1,9 +1,8 @@
-::: {.index}
+::: index
 single: Cookbook; クラス定数
 :::
 
-クラス定数
-==========
+# クラス定数
 
 クラスのテストダブルを生成するとき、Mockeryはモックするクラスの定数定義をスタブしません。そのため時々、クラス定数が存在しないため、テストのセットアップやアプリケーションのコード自身で望んでいない振る舞いを引き起こす可能性があります。`PHP Fatal error:  Uncaught Error: Undefined class constant 'FOO' in ...`のPHPエラーさえ起きる可能性があります。
 
@@ -15,7 +14,7 @@ Mockeryでクラス定数をサポートするのは可能ですが、非常に�
 
 次に、仮想ですが起こり得るシナリオをご覧ください。
 
-``` {.php}
+``` php
 class Fetcher
 {
     const SUCCESS = 0;
@@ -48,7 +47,7 @@ class MyClass
 `MyClass`をテストする場合、テストスーツを実行するたびに、インターネットから何かがダウンロードされる`Fetcher`を動かすのは、本当に好ましくありません。
 ですから、モックしましょう。
 
-``` {.php}
+``` php
 // fetchは静的呼び出しなため、alias:を使う
 \Mockery::mock('alias:Fetcher')
     ->shouldReceive('fetch')
@@ -64,7 +63,7 @@ $myClass->doFetching();
 
 `Fetcher`クラスのスタブを組んで、クラス定数をスタブします。それから`namedMock()`を使用し、作成したスタブを元に`Fetcher`という名前のモックを生成します。（訳注：実際にはmockメソッドの引数で指定しており、メソッドは呼び出されていません。）
 
-``` {.php}
+``` php
 class FetcherStub
 {
     const SUCCESS = 0;
@@ -83,7 +82,7 @@ Mockeryは`FetcherStub`を拡張し、`Fetcher`という名前のクラスを生
 
 `Fetcher::fetch()`が静的メソッドない場合でも、同じアプローチが取れます。
 
-``` {.php}
+``` php
 class Fetcher
 {
     const SUCCESS = 0;
@@ -113,7 +112,7 @@ class MyClass
 
 テストは、次のようになります。
 
-``` {.php}
+``` php
 class FetcherStub
 {
     const SUCCESS = 0;

@@ -1,9 +1,8 @@
-::: {.index}
+::: index
 single: 例外
 :::
 
-Mockeryの例外
-=============
+# Mockeryの例外
 
 Mockeryはモックオブジェクトの確認に失敗した場合、３タイプの例外を投げます。
 
@@ -13,8 +12,7 @@ Mockeryはモックオブジェクトの確認に失敗した場合、３タイ�
 
 例外のメッセージとして渡される特定の情報を調べたり、ログしたり、出力を再フォーマットする場合に便利なゲッターで個別に情報を得るために、これらの例外をtry\...catchブロックで補足することができます。
 
-MockeryExceptionInvalidCountException
--------------------------------------
+## MockeryExceptionInvalidCountException
 
 この例外は、実行回数が多すぎる／少なすぎる場合に使用されます。以下のメソッドを提供しています。
 
@@ -27,8 +25,7 @@ MockeryExceptionInvalidCountException
 -   `getActualCount()` -
     指定した引数の制約により、実際に呼び出された回数
 
-MockeryExceptionInvalidOrderException
--------------------------------------
+## MockeryExceptionInvalidOrderException
 
 この例外クラスは、`ordered()`と`globally()`エクスペクションモディファイヤによる、期待している実行順序から、メソッドの呼び出し順が外れたときに使用されます。以下のメソッドを提供しています。
 
@@ -39,8 +36,7 @@ MockeryExceptionInvalidOrderException
     実行が期待されていたか呼び出しのインデックスを表す整数値を返す
 -   `getActualOrder()` - 実行されたメソッド呼び出しのインデックスを返す
 
-MockeryExceptionNoMatchingExpectationException
-----------------------------------------------
+## MockeryExceptionNoMatchingExpectationException
 
 この例外は、メソッドコールが既知のエクスペクションと一致しない場合に使用されます。全てのエクスペクションは、メソッド名と期待している引数のリストにより、一意に識別されます。この振る舞いをやめ、すでに説明したshouldIgnoreMissing()振る舞いモディファイヤを使用することにより、期待外のメソッドコール時にNULLを返すこともできます。この例外は以下のメソッドを提供します。
 

@@ -1,9 +1,8 @@
-::: {.index}
+::: index
 single: クイックリファレンス
 :::
 
-クイックリファレンス
-====================
+# クイックリファレンス
 
 このページは、Mockeryの最も利用される機能を素早く理解してもらうために、短く概略を示すことを目的としています。
 
@@ -11,7 +10,7 @@ Mockeryの機能を全て学習するには、「[リファレンス](index.html
 
 PHPUnitとMockeryを統合するか、`MockeryTestCase`を拡張してください。
 
-``` {.php}
+``` php
 use \Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class MyTest extends MockeryTestCase
@@ -21,7 +20,7 @@ class MyTest extends MockeryTestCase
 
 もしくは、`MockeryPHPUnitIntegration`トレイトを使用します。
 
-``` {.php}
+``` php
 use \PHPUnit\Framework\TestCase;
 use \Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
@@ -33,33 +32,33 @@ class MyTest extends TestCase
 
 テストダブル（代替物）を作成するには：
 
-``` {.php}
+``` php
 $testDouble = \Mockery::mock('MyClass');
 ```
 
 特定のインターフェイスを実装したテストダブルを作成するには：
 
-``` {.php}
+``` php
 $testDouble = \Mockery::mock('MyClass, MyInterface');
 ```
 
 テストダブルでメソッドが呼び出されるのを期待するには：
 
-``` {.php}
+``` php
 $testDouble = \Mockery::mock('MyClass');
 $testDouble->shouldReceive('foo');
 ```
 
 テストダブルでメソッドが呼び出され **ない** のを期待するには：
 
-``` {.php}
+``` php
 $testDouble = \Mockery::mock('MyClass');
 $testDouble->shouldNotReceive('foo');
 ```
 
 テストダブルでメソッドが一回(once)、特定の引数で呼び出され、ある値を返すのを期待するには：
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('foo')
     ->once()
@@ -69,7 +68,7 @@ $mock->shouldReceive('foo')
 
 テストダブルでメソッドが呼び出され、成功した呼び出しごとに異なった値が返されることを期待するには：
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('foo')
     ->andReturn(1, 2, 3);
@@ -82,19 +81,19 @@ $mock->foo(); // int(3);
 
 部分的なランタイムテストダブルを生成するには：
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass')->makePartial();
 ```
 
 スパイを生成するには：
 
-``` {.php}
+``` php
 $spy = \Mockery::spy('MyClass');
 ```
 
 スパイでメソッドの呼び出しが必ず行われるのを期待するには：
 
-``` {.php}
+``` php
 $spy = \Mockery::spy('MyClass');
 
 $spy->foo();
@@ -102,12 +101,11 @@ $spy->foo();
 $spy->shouldHaveReceived()->foo();
 ```
 
-簡単ではない例
---------------
+## 簡単ではない例
 
 一連のメソッド呼び出しにより、連続した値が返されるモックオブジェクトを生成するには：
 
-``` {.php}
+``` php
 use \Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class SimpleTest extends MockeryTestCase
@@ -123,7 +121,7 @@ class SimpleTest extends MockeryTestCase
 
 あるメソッドコールで自身にチェーンし、未定義(Undefined)のオブジェクトを返すモックオブジェクトを生成するには：
 
-``` {.php}
+``` php
 use \Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class UndefinedTest extends MockeryTestCase
@@ -139,7 +137,7 @@ class UndefinedTest extends MockeryTestCase
 
 複数のquery呼び出しと、一回のupdate呼び出しのモックオブジェクトを生成するには：
 
-``` {.php}
+``` php
 use \Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class DbTest extends MockeryTestCase
@@ -157,7 +155,7 @@ class DbTest extends MockeryTestCase
 
 updateの前に、全queryが実行されるのを期待するには：
 
-``` {.php}
+``` php
 use \Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class DbTest extends MockeryTestCase
@@ -175,7 +173,7 @@ class DbTest extends MockeryTestCase
 
 startupの後に全queryが実行され、finishの前に多くの異なった引数でそれらのqueryが実行されることを期待するモックを作成するには：
 
-``` {.php}
+``` php
 use \Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class DbTest extends MockeryTestCase

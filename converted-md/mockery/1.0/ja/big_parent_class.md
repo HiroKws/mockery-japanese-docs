@@ -1,13 +1,12 @@
-::: {.index}
+::: index
 single: Cookbook; 大きな親クラス
 :::
 
-大きな親クラス
-==============
+# 大きな親クラス
 
 あるアプリケーションのコード、特に古いレガシーなコードで、「大きな親クラス」を拡張しているクラスに出会うことがあります。親クラスは知りすぎており、多くをやりすぎています。
 
-``` {.php}
+``` php
 class BigParentClass
 {
     public function doesEverything()
@@ -35,7 +34,7 @@ class ChildClass extends BigParentClass
 
 何かできること、それは何か...型破りなことをしましょう。`ChildClass`自身のランタイムパーシャルテストダブルを生成し、親の`doesEverything()`メソッドのみをモックします。
 
-``` {.php}
+``` php
 $childClass = \Mockery::mock('ChildClass')->makePartial();
 $childClass->shouldReceive('doesEverything')
     ->andReturn('some result from parent');

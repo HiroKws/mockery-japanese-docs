@@ -1,20 +1,18 @@
-::: {.index}
+::: index
 single: shouldReceiveのバリエーション
 :::
 
-shouldReceiveのバリエーション
-=============================
+# shouldReceiveのバリエーション
 
 Mockerの`should*`メソッドのように文字列ではなく、Mockery1.0.0よりPHPメソッドを呼び出すような指定方法をサポートします。
 
 `allows()`と`expects()`、２つのMockeryメソッドが利用できます。
 
-Allows
-------
+## Allows
 
 あらかじめメソッドの戻り値を定義できるが、何回呼び出されるか、もしくは呼び出されないかを問わないスタブを作成する場合は、`allows()`を使用します。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->allows([
     'name_of_method_1' => 'return value',
@@ -24,7 +22,7 @@ $mock->allows([
 
 これは次の`shouldReceive`と同じ動作をします。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive([
     'name_of_method_1' => 'return value',
@@ -36,7 +34,7 @@ $mock->shouldReceive([
 
 引数を指定する場合は次のようになります。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->allows()
     ->name_of_method_1($arg1)
@@ -45,19 +43,18 @@ $mock->allows()
 
 これは次の`shouldReceive`と同じ動作をします。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method_1')
     ->with($arg1)
     ->andReturn('return value');
 ```
 
-Expects
--------
+## Expects
 
 特定のメソッドが呼び出されるのを確認したい場合は、`expects()`を使います。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->expects()
     ->name_of_method_1($arg1)
@@ -66,7 +63,7 @@ $mock->expects()
 
 これは次の`shouldReceive`と同じ動作をします。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->shouldReceive('name_of_method_1')
     ->once()
@@ -76,7 +73,7 @@ $mock->shouldReceive('name_of_method_1')
 
 `expects()`はデフォルトで、そのメソッドを一回のみ呼び出すエクスペクションを設定します。２回以上メソッドが呼び出されるのを期待する場合は、エクスペクションを変更できます。
 
-``` {.php}
+``` php
 $mock = \Mockery::mock('MyClass');
 $mock->expects()
     ->name_of_method_1($arg1)
